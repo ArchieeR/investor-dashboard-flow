@@ -8,7 +8,7 @@ interface TopNavigationProps {
 }
 
 export const TopNavigation = ({ activeTab, onTabChange }: TopNavigationProps) => {
-  const tabs = ['Portfolio', 'ETFs', 'News', 'Playground'];
+  const tabs = ['Portfolio', 'News', 'Community'];
 
   return (
     <div className="border-b border-border bg-card">

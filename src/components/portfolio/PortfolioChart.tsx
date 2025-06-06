@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, Area, AreaChart } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, Area, AreaChart, CartesianGrid } from 'recharts';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 
 const chartData = [
@@ -29,7 +29,7 @@ export const PortfolioChart = () => {
             <div className="text-3xl font-bold">£{currentValue.toLocaleString()}</div>
             <div className="flex items-center space-x-2 text-sm text-muted-foreground">
               <span className={`font-medium ${dayChange < 0 ? 'text-red-600' : 'text-green-600'}`}>
-                {dayChange < 0 ? '' : '+'}{dayChangePercent}% {dayChange < 0 ? '' : '+'}{dayChange.toLocaleString()} 1M
+                {dayChangePercent}% {dayChange.toLocaleString()} 1M
               </span>
               <span>Jun 6, 9:21:06 PM UTC+2 · GBP · Disclaimer</span>
             </div>
@@ -64,18 +64,21 @@ export const PortfolioChart = () => {
                   <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
                 </linearGradient>
               </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
               <XAxis 
                 dataKey="displayDate" 
-                axisLine={false}
-                tickLine={false}
+                axisLine={true}
+                tickLine={true}
                 tick={{ fontSize: 12, fill: '#6b7280' }}
+                stroke="#6b7280"
               />
               <YAxis 
                 domain={['dataMin - 1000', 'dataMax + 1000']}
-                axisLine={false}
-                tickLine={false}
+                axisLine={true}
+                tickLine={true}
                 tick={{ fontSize: 12, fill: '#6b7280' }}
                 tickFormatter={(value) => `£${(value / 1000).toFixed(0)}k`}
+                stroke="#6b7280"
               />
               <Tooltip 
                 contentStyle={{
