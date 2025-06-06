@@ -12,7 +12,6 @@ export const NotificationWidget = () => {
     {
       id: 'alerts',
       icon: Bell,
-      title: 'Alerts',
       count: 1,
       color: 'bg-red-500',
       items: [
@@ -22,7 +21,6 @@ export const NotificationWidget = () => {
     {
       id: 'news',
       icon: Newspaper,
-      title: 'News',
       count: 3,
       color: 'bg-blue-500',
       items: [
@@ -34,7 +32,6 @@ export const NotificationWidget = () => {
     {
       id: 'economics',
       icon: Calendar,
-      title: 'Economics',
       count: 5,
       color: 'bg-purple-500',
       items: [
@@ -66,23 +63,20 @@ export const NotificationWidget = () => {
           </div>
         </div>
 
-        {/* Action Buttons */}
+        {/* Action Buttons - Icon Only */}
         <div className="grid grid-cols-3 gap-2">
-          <Button variant="outline" size="sm" className="flex flex-col items-center p-3 h-auto">
-            <Settings className="h-4 w-4 mb-1" />
-            <span className="text-xs">Settings</span>
+          <Button variant="outline" size="sm" className="flex items-center justify-center p-3 h-10 w-full">
+            <Settings className="h-4 w-4" />
           </Button>
-          <Button variant="outline" size="sm" className="flex flex-col items-center p-3 h-auto">
-            <Wand2 className="h-4 w-4 mb-1" />
-            <span className="text-xs">Playground</span>
+          <Button variant="outline" size="sm" className="flex items-center justify-center p-3 h-10 w-full">
+            <Wand2 className="h-4 w-4" />
           </Button>
-          <Button variant="outline" size="sm" className="flex flex-col items-center p-3 h-auto">
-            <TrendingUp className="h-4 w-4 mb-1" />
-            <span className="text-xs">Analytics</span>
+          <Button variant="outline" size="sm" className="flex items-center justify-center p-3 h-10 w-full">
+            <TrendingUp className="h-4 w-4" />
           </Button>
         </div>
 
-        {/* Notification Sections - Minimized */}
+        {/* Notification Sections - Icon Only with iOS badges */}
         {notifications.map((notification) => {
           const Icon = notification.icon;
           const isExpanded = expandedSection === notification.id;
@@ -91,15 +85,15 @@ export const NotificationWidget = () => {
             <div key={notification.id} className="border rounded-lg">
               <button
                 onClick={() => toggleSection(notification.id)}
-                className="w-full p-2 flex items-center justify-between hover:bg-accent transition-colors"
+                className="w-full p-3 flex items-center justify-center hover:bg-accent transition-colors relative"
               >
-                <div className="flex items-center space-x-2">
-                  <div className={`p-1.5 rounded-full ${notification.color} text-white`}>
-                    <Icon className="h-3 w-3" />
+                <div className="relative">
+                  <Icon className="h-5 w-5 text-muted-foreground" />
+                  {/* iOS-style notification badge */}
+                  <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
+                    {notification.count}
                   </div>
-                  <span className="font-medium text-sm">{notification.title}</span>
                 </div>
-                <Badge variant="secondary" className="text-xs">{notification.count}</Badge>
               </button>
               
               {isExpanded && (
