@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { Bell, Calendar, News } from 'lucide-react';
+import { Bell, Calendar, Newspaper } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 
@@ -20,7 +20,7 @@ export const NotificationWidget = () => {
     },
     {
       id: 'news',
-      icon: News,
+      icon: Newspaper,
       title: 'News',
       count: 3,
       color: 'bg-blue-500',
