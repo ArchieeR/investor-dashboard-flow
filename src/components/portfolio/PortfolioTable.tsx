@@ -74,6 +74,14 @@ const portfolioData: PortfolioItem[] = [
   }
 ];
 
+// Add region exposure data
+const regionData = [
+  { region: 'North America', percentage: 45.2 },
+  { region: 'Europe', percentage: 28.7 },
+  { region: 'Asia Pacific', percentage: 18.9 },
+  { region: 'Emerging Markets', percentage: 7.2 }
+];
+
 export const PortfolioTable = () => {
   const [sortBy, setSortBy] = useState<keyof PortfolioItem>('percentage');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
@@ -109,114 +117,134 @@ export const PortfolioTable = () => {
   };
 
   return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle>Portfolio Holdings</CardTitle>
-        <div className="flex space-x-2">
-          <button className="text-sm text-muted-foreground hover:text-foreground">
-            Sort by price ↓
-          </button>
-          <button className="text-sm text-muted-foreground hover:text-foreground">
-            Visualize
-          </button>
-        </div>
-      </CardHeader>
-      
-      <CardContent>
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b text-left">
-                <th 
-                  className="pb-3 text-sm font-medium text-muted-foreground cursor-pointer hover:text-foreground"
-                  onClick={() => handleSort('percentage')}
-                >
-                  % OF PORTFOLIO
-                </th>
-                <th 
-                  className="pb-3 text-sm font-medium text-muted-foreground cursor-pointer hover:text-foreground"
-                  onClick={() => handleSort('name')}
-                >
-                  NAME
-                </th>
-                <th 
-                  className="pb-3 text-sm font-medium text-muted-foreground cursor-pointer hover:text-foreground"
-                  onClick={() => handleSort('ticker')}
-                >
-                  TICKER
-                </th>
-                <th 
-                  className="pb-3 text-sm font-medium text-muted-foreground cursor-pointer hover:text-foreground"
-                  onClick={() => handleSort('type')}
-                >
-                  TYPE
-                </th>
-                <th 
-                  className="pb-3 text-sm font-medium text-muted-foreground cursor-pointer hover:text-foreground text-right"
-                  onClick={() => handleSort('value')}
-                >
-                  VALUE
-                </th>
-                <th 
-                  className="pb-3 text-sm font-medium text-muted-foreground cursor-pointer hover:text-foreground text-right"
-                  onClick={() => handleSort('dayChange')}
-                >
-                  DAY CHANGE
-                </th>
-                <th 
-                  className="pb-3 text-sm font-medium text-muted-foreground cursor-pointer hover:text-foreground text-right"
-                  onClick={() => handleSort('totalChange')}
-                >
-                  TOTAL CHANGE
-                </th>
-                <th className="pb-3 w-8"></th>
-              </tr>
-            </thead>
-            <tbody>
-              {sortedData.map((item, index) => (
-                <tr key={item.ticker} className="border-b hover:bg-accent transition-colors">
-                  <td className="py-4">
-                    <div className="font-semibold">{item.percentage}%</div>
-                  </td>
-                  <td className="py-4">
-                    <div className="font-medium">{item.name}</div>
-                  </td>
-                  <td className="py-4">
-                    <div className="font-mono text-sm">{item.ticker}</div>
-                  </td>
-                  <td className="py-4">
-                    <Badge variant="secondary" className={getTypeColor(item.type)}>
-                      {item.type}
-                    </Badge>
-                  </td>
-                  <td className="py-4 text-right">
-                    <div className="font-semibold">£{item.value.toLocaleString()}</div>
-                  </td>
-                  <td className="py-4 text-right">
-                    <div className={`font-medium ${item.dayChange >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                      {item.dayChange >= 0 ? '+' : ''}£{item.dayChange}
-                    </div>
-                    <div className={`text-sm ${item.dayChangePercent >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                      {item.dayChangePercent >= 0 ? '+' : ''}{item.dayChangePercent}%
-                    </div>
-                  </td>
-                  <td className="py-4 text-right">
-                    <div className={`font-medium ${item.totalChange >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                      {item.totalChange >= 0 ? '+' : ''}£{item.totalChange}
-                    </div>
-                    <div className={`text-sm ${item.totalChangePercent >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                      {item.totalChangePercent >= 0 ? '+' : ''}{item.totalChangePercent}%
-                    </div>
-                  </td>
-                  <td className="py-4">
-                    <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                  </td>
+    <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+      {/* Main Portfolio Table */}
+      <Card className="lg:col-span-3">
+        <CardHeader className="flex flex-row items-center justify-between">
+          <CardTitle>Portfolio Holdings</CardTitle>
+          <div className="flex space-x-2">
+            <button className="text-sm text-muted-foreground hover:text-foreground">
+              Sort by price ↓
+            </button>
+            <button className="text-sm text-muted-foreground hover:text-foreground">
+              Visualize
+            </button>
+          </div>
+        </CardHeader>
+        
+        <CardContent>
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b text-left">
+                  <th 
+                    className="pb-3 text-sm font-medium text-muted-foreground cursor-pointer hover:text-foreground"
+                    onClick={() => handleSort('percentage')}
+                  >
+                    %
+                  </th>
+                  <th 
+                    className="pb-3 text-sm font-medium text-muted-foreground cursor-pointer hover:text-foreground"
+                    onClick={() => handleSort('name')}
+                  >
+                    NAME
+                  </th>
+                  <th 
+                    className="pb-3 text-sm font-medium text-muted-foreground cursor-pointer hover:text-foreground"
+                    onClick={() => handleSort('ticker')}
+                  >
+                    TICKER
+                  </th>
+                  <th 
+                    className="pb-3 text-sm font-medium text-muted-foreground cursor-pointer hover:text-foreground"
+                    onClick={() => handleSort('type')}
+                  >
+                    TYPE
+                  </th>
+                  <th 
+                    className="pb-3 text-sm font-medium text-muted-foreground cursor-pointer hover:text-foreground text-right"
+                    onClick={() => handleSort('value')}
+                  >
+                    VALUE
+                  </th>
+                  <th 
+                    className="pb-3 text-sm font-medium text-muted-foreground cursor-pointer hover:text-foreground text-right"
+                    onClick={() => handleSort('dayChange')}
+                  >
+                    DAY CHANGE
+                  </th>
+                  <th 
+                    className="pb-3 text-sm font-medium text-muted-foreground cursor-pointer hover:text-foreground text-right"
+                    onClick={() => handleSort('totalChange')}
+                  >
+                    TOTAL CHANGE
+                  </th>
+                  <th className="pb-3 w-8"></th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </CardContent>
-    </Card>
+              </thead>
+              <tbody>
+                {sortedData.map((item, index) => (
+                  <tr key={item.ticker} className="border-b hover:bg-accent transition-colors">
+                    <td className="py-4">
+                      <div className="font-semibold">{item.percentage}%</div>
+                    </td>
+                    <td className="py-4">
+                      <div className="font-medium">{item.name}</div>
+                    </td>
+                    <td className="py-4">
+                      <div className="font-mono text-sm">{item.ticker}</div>
+                    </td>
+                    <td className="py-4">
+                      <Badge variant="secondary" className={getTypeColor(item.type)}>
+                        {item.type}
+                      </Badge>
+                    </td>
+                    <td className="py-4 text-right">
+                      <div className="font-semibold">£{item.value.toLocaleString()}</div>
+                    </td>
+                    <td className="py-4 text-right">
+                      <div className={`font-medium ${item.dayChange >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                        {item.dayChange >= 0 ? '+' : ''}£{item.dayChange}
+                      </div>
+                      <div className={`text-sm ${item.dayChangePercent >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                        {item.dayChangePercent >= 0 ? '+' : ''}{item.dayChangePercent}%
+                      </div>
+                    </td>
+                    <td className="py-4 text-right">
+                      <div className={`font-medium ${item.totalChange >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                        {item.totalChange >= 0 ? '+' : ''}£{item.totalChange}
+                      </div>
+                      <div className={`text-sm ${item.totalChangePercent >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                        {item.totalChangePercent >= 0 ? '+' : ''}{item.totalChangePercent}%
+                      </div>
+                    </td>
+                    <td className="py-4">
+                      <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Region Exposure Card */}
+      <Card className="lg:col-span-1">
+        <CardHeader>
+          <CardTitle className="text-lg">Region Exposure</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-3">
+            {regionData.map((region, index) => (
+              <div key={region.region} className="flex justify-between items-center">
+                <span className="text-sm text-muted-foreground">{region.region}</span>
+                <span className="font-semibold">{region.percentage}%</span>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   );
 };
