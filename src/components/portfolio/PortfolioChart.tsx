@@ -45,7 +45,7 @@ export const PortfolioChart = () => {
               <span className={`font-medium ${dayChange < 0 ? 'text-red-600' : 'text-green-600'}`}>
                 {dayChangePercent}% {dayChange.toLocaleString()} 1M
               </span>
-              <span>Jun 6, 9:21:06 PM UTC+2 · GBP</span>
+              <span className="text-xs text-left">Jun 6, 9:21:06 PM UTC+2 · GBP</span>
             </div>
           </div>
           
