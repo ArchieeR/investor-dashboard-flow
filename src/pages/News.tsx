@@ -1,0 +1,28 @@
+
+import { useState } from 'react';
+import { TopNavigation } from '@/components/portfolio/TopNavigation';
+import { NewsFilters } from '@/components/news/NewsFilters';
+import { NewsTable } from '@/components/news/NewsTable';
+
+const News = () => {
+  const [activeTab, setActiveTab] = useState('News');
+
+  return (
+    <div className="min-h-screen bg-background">
+      <TopNavigation activeTab={activeTab} onTabChange={setActiveTab} />
+      
+      <div className="container mx-auto px-4 py-6">
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <h1 className="text-3xl font-bold text-foreground">News</h1>
+          </div>
+          
+          <NewsFilters />
+          <NewsTable />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default News;

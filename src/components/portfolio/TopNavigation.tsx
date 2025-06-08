@@ -1,5 +1,6 @@
 
 import { Search } from 'lucide-react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Input } from '@/components/ui/input';
 
 interface TopNavigationProps {
@@ -8,7 +9,19 @@ interface TopNavigationProps {
 }
 
 export const TopNavigation = ({ activeTab, onTabChange }: TopNavigationProps) => {
-  const tabs = ['Portfolio', 'News', 'Community'];
+  const navigate = useNavigate();
+  const location = useLocation();
+  
+  const tabs = [
+    { name: 'Portfolio', path: '/' },
+    { name: 'News', path: '/news' },
+    { name: 'Community', path: '/community' }
+  ];
+
+  const handleTabClick = (tab: { name: string; path: string }) => {
+    onTabChange(tab.name);
+    navigate(tab.path);
+  };
 
   return (
     <div className="border-b border-border bg-card">
@@ -16,21 +29,26 @@ export const TopNavigation = ({ activeTab, onTabChange }: TopNavigationProps) =>
         <div className="flex items-center justify-between h-16">
           {/* Logo/App Name */}
           <div className="flex items-center space-x-8">
-            <h1 className="text-2xl font-bold text-foreground">WealthTracker</h1>
+            <h1 
+              className="text-2xl font-bold text-foreground cursor-pointer" 
+              onClick={() => navigate('/')}
+            >
+              WealthTracker
+            </h1>
             
             {/* Navigation Tabs */}
             <nav className="hidden md:flex space-x-6">
               {tabs.map((tab) => (
                 <button
-                  key={tab}
-                  onClick={() => onTabChange(tab)}
+                  key={tab.name}
+                  onClick={() => handleTabClick(tab)}
                   className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${
-                    activeTab === tab
+                    location.pathname === tab.path
                       ? 'text-primary bg-primary/10'
                       : 'text-muted-foreground hover:text-foreground hover:bg-accent'
                   }`}
                 >
-                  {tab}
+                  {tab.name}
                 </button>
               ))}
             </nav>

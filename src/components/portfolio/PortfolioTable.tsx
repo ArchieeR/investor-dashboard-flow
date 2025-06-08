@@ -1,6 +1,6 @@
-
 import { useState } from 'react';
 import { ChevronRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 
@@ -77,6 +77,7 @@ const portfolioData: PortfolioItem[] = [
 export const PortfolioTable = () => {
   const [sortBy, setSortBy] = useState<keyof PortfolioItem>('percentage');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+  const navigate = useNavigate();
 
   const handleSort = (field: keyof PortfolioItem) => {
     if (sortBy === field) {
@@ -85,6 +86,10 @@ export const PortfolioTable = () => {
       setSortBy(field);
       setSortOrder('desc');
     }
+  };
+
+  const handleTickerClick = (ticker: string) => {
+    navigate(`/asset/${ticker}`);
   };
 
   const sortedData = [...portfolioData].sort((a, b) => {
@@ -131,7 +136,7 @@ export const PortfolioTable = () => {
                   className="pb-3 text-sm font-medium text-muted-foreground cursor-pointer hover:text-foreground"
                   onClick={() => handleSort('percentage')}
                 >
-                  % OF PORTFOLIO
+                  %
                 </th>
                 <th 
                   className="pb-3 text-sm font-medium text-muted-foreground cursor-pointer hover:text-foreground"
@@ -182,7 +187,12 @@ export const PortfolioTable = () => {
                     <div className="font-medium">{item.name}</div>
                   </td>
                   <td className="py-4">
-                    <div className="font-mono text-sm">{item.ticker}</div>
+                    <div 
+                      className="font-mono text-sm cursor-pointer hover:text-primary"
+                      onClick={() => handleTickerClick(item.ticker)}
+                    >
+                      {item.ticker}
+                    </div>
                   </td>
                   <td className="py-4">
                     <Badge variant="secondary" className={getTypeColor(item.type)}>
