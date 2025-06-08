@@ -8,6 +8,8 @@ import Index from "./pages/Index";
 import News from "./pages/News";
 import AssetDetail from "./pages/AssetDetail";
 import Community from "./pages/Community";
+import Earnings from "./pages/Earnings";
+import Events from "./pages/Events";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -21,6 +23,8 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/news" element={<News />} />
+          <Route path="/earnings" element={<Earnings />} />
+          <Route path="/events" element={<Events />} />
           <Route path="/asset/:ticker" element={<AssetDetail />} />
           <Route path="/community" element={<Community />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
