@@ -76,40 +76,42 @@ export const NotificationWidget = () => {
           </Button>
         </div>
 
-        {/* Notification Sections - Icon Only with iOS badges */}
-        {notifications.map((notification) => {
-          const Icon = notification.icon;
-          const isExpanded = expandedSection === notification.id;
-          
-          return (
-            <div key={notification.id} className="border rounded-lg">
-              <button
-                onClick={() => toggleSection(notification.id)}
-                className="w-full p-3 flex items-center justify-center hover:bg-accent transition-colors relative"
-              >
-                <div className="relative">
-                  <Icon className="h-5 w-5 text-muted-foreground" />
-                  {/* iOS-style notification badge */}
-                  <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
-                    {notification.count}
+        {/* Notification Sections - In a Row */}
+        <div className="grid grid-cols-3 gap-2">
+          {notifications.map((notification) => {
+            const Icon = notification.icon;
+            
+            return (
+              <div key={notification.id} className="border rounded-lg">
+                <button
+                  onClick={() => toggleSection(notification.id)}
+                  className="w-full p-3 flex items-center justify-center hover:bg-accent transition-colors relative"
+                >
+                  <div className="relative">
+                    <Icon className="h-5 w-5 text-muted-foreground" />
+                    {/* iOS-style notification badge */}
+                    <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
+                      {notification.count}
+                    </div>
                   </div>
+                </button>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Expanded Section */}
+        {expandedSection && (
+          <div className="border rounded-lg p-2">
+            <div className="space-y-1">
+              {notifications.find(n => n.id === expandedSection)?.items.map((item, index) => (
+                <div key={index} className="text-xs text-muted-foreground p-2 bg-accent rounded">
+                  {item}
                 </div>
-              </button>
-              
-              {isExpanded && (
-                <div className="px-2 pb-2 border-t">
-                  <div className="space-y-1 pt-2">
-                    {notification.items.map((item, index) => (
-                      <div key={index} className="text-xs text-muted-foreground p-2 bg-accent rounded">
-                        {item}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
+              ))}
             </div>
-          );
-        })}
+          </div>
+        )}
       </CardContent>
     </Card>
   );

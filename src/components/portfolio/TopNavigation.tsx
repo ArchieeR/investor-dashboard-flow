@@ -15,6 +15,7 @@ export const TopNavigation = ({ activeTab, onTabChange }: TopNavigationProps) =>
   const tabs = [
     { name: 'Portfolio', path: '/' },
     { name: 'News', path: '/news' },
+    { name: 'Asset', path: '/asset/VUSA' },
     { name: 'Community', path: '/community' }
   ];
 
