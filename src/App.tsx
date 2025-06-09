@@ -9,6 +9,7 @@ import News from "./pages/News";
 import AssetDetail from "./pages/AssetDetail";
 import Community from "./pages/Community";
 import Events from "./pages/Events";
+import ETFScreener from "./pages/ETFScreener";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -23,6 +24,7 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/news" element={<News />} />
           <Route path="/events" element={<Events />} />
+          <Route path="/screener" element={<ETFScreener />} />
           <Route path="/asset/:ticker" element={<AssetDetail />} />
           <Route path="/community" element={<Community />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

@@ -8,6 +8,7 @@ interface NewsItem {
   asset: string;
   impact: number;
   timestamp: string;
+  source: string;
 }
 
 const newsData: NewsItem[] = [
@@ -17,7 +18,8 @@ const newsData: NewsItem[] = [
     importance: 'HIGH',
     asset: 'QQQ',
     impact: 4,
-    timestamp: '2 hours ago'
+    timestamp: '2 hours ago',
+    source: 'Reuters'
   },
   {
     id: '2',
@@ -25,7 +27,8 @@ const newsData: NewsItem[] = [
     importance: 'HIGH',
     asset: 'EQQQ',
     impact: 1,
-    timestamp: '4 hours ago'
+    timestamp: '4 hours ago',
+    source: 'FT.com'
   },
   {
     id: '3',
@@ -33,7 +36,8 @@ const newsData: NewsItem[] = [
     importance: 'HIGH',
     asset: 'QQQ',
     impact: 3,
-    timestamp: '6 hours ago'
+    timestamp: '6 hours ago',
+    source: 'Bloomberg'
   },
   {
     id: '4',
@@ -41,7 +45,8 @@ const newsData: NewsItem[] = [
     importance: 'HIGH',
     asset: 'EQQQ',
     impact: 4,
-    timestamp: '8 hours ago'
+    timestamp: '8 hours ago',
+    source: 'WSJ'
   },
   {
     id: '5',
@@ -49,7 +54,8 @@ const newsData: NewsItem[] = [
     importance: 'MED',
     asset: 'EQQQ',
     impact: 1,
-    timestamp: '10 hours ago'
+    timestamp: '10 hours ago',
+    source: 'CNBC'
   }
 ];
 
@@ -83,8 +89,10 @@ export const NewsTable = () => {
               <div className="font-medium text-foreground leading-snug">
                 {item.headline}
               </div>
-              <div className="text-xs text-muted-foreground mt-1">
-                {item.timestamp}
+              <div className="text-xs text-muted-foreground mt-1 flex items-center space-x-2">
+                <span>{item.timestamp}</span>
+                <span>•</span>
+                <span className="font-medium">{item.source}</span>
               </div>
             </div>
             

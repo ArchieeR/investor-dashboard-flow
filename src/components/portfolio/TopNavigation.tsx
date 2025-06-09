@@ -80,7 +80,7 @@ export const TopNavigation = ({ activeTab, onTabChange }: TopNavigationProps) =>
                 <DropdownMenuTrigger asChild>
                   <button
                     className={`flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors ${
-                      location.pathname === '/news' || location.pathname.includes('/earnings') || location.pathname.includes('/events')
+                      location.pathname === '/news' || location.pathname.includes('/earnings') || location.pathname.includes('/events') || location.pathname.includes('/screener')
                         ? 'text-primary bg-primary/10'
                         : 'text-muted-foreground hover:text-foreground hover:bg-accent'
                     }`}
@@ -101,6 +101,12 @@ export const TopNavigation = ({ activeTab, onTabChange }: TopNavigationProps) =>
                     className="cursor-pointer"
                   >
                     Events
+                  </DropdownMenuItem>
+                  <DropdownMenuItem 
+                    onClick={() => handleResearchItemClick('/screener', 'ETF Screener')}
+                    className="cursor-pointer"
+                  >
+                    ETF Screener
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
