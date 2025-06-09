@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { TopNavigation } from '@/components/portfolio/TopNavigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -7,13 +6,19 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ChevronLeft, ChevronRight, Calendar, Clock, MapPin, TrendingUp, TrendingDown } from 'lucide-react';
+import { Checkbox } from '@/components/ui/checkbox';
 
 const Events = () => {
   const [activeTab, setActiveTab] = useState('Events');
   const [selectedWeek, setSelectedWeek] = useState('This Week');
   const [eventType, setEventType] = useState('earnings');
+  const [selectedETF, setSelectedETF] = useState('all');
+  const [selectedEconomic, setSelectedEconomic] = useState(true);
+  const [selectedPolitical, setSelectedPolitical] = useState(true);
 
   const weekOptions = ['Yesterday', 'Today', 'Tomorrow', 'This Week', 'Next Week'];
+
+  const etfOptions = ['all', 'SPY', 'QQQ', 'VTI', 'EQQQ', 'VWCE', 'SGLN', 'IIND', 'IJPN', 'IJXP', 'SEMA', 'IEEM'];
 
   // Earnings data with random tickers
   const earningsData = [
@@ -150,8 +155,28 @@ const Events = () => {
     }
   ];
 
-  // Economic events data
+  // Economic events data with calendar structure
   const economicEvents = [
+    { date: 'Mon 9', count: 1, events: [{ time: '2:00 PM', title: 'Federal Reserve Interest Rate Decision', type: 'Economic', impact: 'High' }] },
+    { date: 'Tue 10', count: 0, events: [] },
+    { date: 'Wed 11', count: 1, events: [{ time: '8:45 AM', title: 'ECB Monetary Policy Meeting', type: 'Economic', impact: 'High' }] },
+    { date: 'Thu 12', count: 1, events: [{ time: '8:30 AM', title: 'US Non-Farm Payrolls', type: 'Economic', impact: 'High' }] },
+    { date: 'Fri 13', count: 0, events: [] },
+    { date: 'Sat 14', count: 0, events: [] }
+  ];
+
+  // Political events data with calendar structure
+  const politicalEvents = [
+    { date: 'Mon 9', count: 1, events: [{ time: '9:00 AM', title: 'G7 Summit', type: 'Political', impact: 'Medium' }] },
+    { date: 'Tue 10', count: 1, events: [{ time: '10:00 AM', title: 'EU Trade Policy Meeting', type: 'Political', impact: 'Medium' }] },
+    { date: 'Wed 11', count: 0, events: [] },
+    { date: 'Thu 12', count: 0, events: [] },
+    { date: 'Fri 13', count: 0, events: [] },
+    { date: 'Sat 14', count: 0, events: [] }
+  ];
+
+  // Economic events data
+  const economicEventsOld = [
     {
       id: 1,
       title: 'Federal Reserve Interest Rate Decision',
@@ -185,7 +210,7 @@ const Events = () => {
   ];
 
   // Political events data
-  const politicalEvents = [
+  const politicalEventsOld = [
     {
       id: 1,
       title: 'G7 Summit',
@@ -208,6 +233,7 @@ const Events = () => {
     }
   ];
 
+  // List view data
   const listViewData = [
     {
       ticker: 'AVGO',
@@ -259,91 +285,34 @@ const Events = () => {
     }
   };
 
-  const renderEconomicEvents = () => {
-    return (
-      <div className="grid gap-4">
-        {economicEvents.map((event) => (
-          <Card key={event.id} className="hover:shadow-md transition-shadow">
-            <CardHeader>
-              <div className="flex items-start justify-between">
-                <div>
-                  <CardTitle className="text-lg">{event.title}</CardTitle>
-                  <CardDescription className="mt-2">{event.description}</CardDescription>
-                </div>
-                <div className="flex space-x-2">
-                  <Badge variant="outline">{event.type}</Badge>
-                  <Badge variant={getImpactColor(event.impact)}>{event.impact} Impact</Badge>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center space-x-6 text-sm text-muted-foreground">
-                <div className="flex items-center space-x-2">
-                  <Calendar className="h-4 w-4" />
-                  <span>{event.date}</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Clock className="h-4 w-4" />
-                  <span>{event.time}</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <MapPin className="h-4 w-4" />
-                  <span>{event.location}</span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-    );
-  };
-
-  const renderPoliticalEvents = () => {
-    return (
-      <div className="grid gap-4">
-        {politicalEvents.map((event) => (
-          <Card key={event.id} className="hover:shadow-md transition-shadow">
-            <CardHeader>
-              <div className="flex items-start justify-between">
-                <div>
-                  <CardTitle className="text-lg">{event.title}</CardTitle>
-                  <CardDescription className="mt-2">{event.description}</CardDescription>
-                </div>
-                <div className="flex space-x-2">
-                  <Badge variant="outline">{event.type}</Badge>
-                  <Badge variant={getImpactColor(event.impact)}>{event.impact} Impact</Badge>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center space-x-6 text-sm text-muted-foreground">
-                <div className="flex items-center space-x-2">
-                  <Calendar className="h-4 w-4" />
-                  <span>{event.date}</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Clock className="h-4 w-4" />
-                  <span>{event.time}</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <MapPin className="h-4 w-4" />
-                  <span>{event.location}</span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-    );
+  const getCalendarData = () => {
+    if (eventType === 'earnings') return earningsData;
+    
+    const events = [];
+    if (selectedEconomic) events.push(...economicEvents);
+    if (selectedPolitical) events.push(...politicalEvents);
+    
+    // Merge events by date
+    const mergedEvents = events.reduce((acc, dayData) => {
+      const existingDay = acc.find(d => d.date === dayData.date);
+      if (existingDay) {
+        existingDay.events.push(...dayData.events);
+        existingDay.count = existingDay.events.length;
+      } else {
+        acc.push({ ...dayData });
+      }
+      return acc;
+    }, [] as any[]);
+    
+    return mergedEvents.length > 0 ? mergedEvents : earningsData.map(d => ({ ...d, events: [], count: 0 }));
   };
 
   const renderCalendarView = () => {
-    if (eventType === 'economic') return renderEconomicEvents();
-    if (eventType === 'political') return renderPoliticalEvents();
+    const calendarData = getCalendarData();
     
     return (
       <div className="grid grid-cols-7 gap-4">
-        {earningsData.map((day, index) => (
+        {calendarData.map((day, index) => (
           <Card key={index} className={`min-h-[300px] ${day.count > 0 ? 'hover:shadow-md' : ''} transition-shadow`}>
             <CardHeader className="pb-2">
               <div className="flex items-center justify-between">
@@ -359,12 +328,19 @@ const Events = () => {
               {day.events.slice(0, 4).map((event, eventIndex) => (
                 <div key={eventIndex} className="p-2 bg-accent/50 rounded text-xs">
                   <div className="flex items-center space-x-1 mb-1">
-                    <span className="font-medium text-primary">{event.ticker}</span>
+                    <span className="font-medium text-primary">
+                      {event.ticker || event.type}
+                    </span>
                     <span className="text-muted-foreground">{event.time}</span>
                   </div>
                   <div className="font-medium text-xs leading-tight">
-                    {event.company}
+                    {event.company || event.title}
                   </div>
+                  {event.impact && (
+                    <Badge variant={getImpactColor(event.impact)} className="text-xs mt-1">
+                      {event.impact}
+                    </Badge>
+                  )}
                 </div>
               ))}
               {day.count > 4 && (
@@ -443,21 +419,54 @@ const Events = () => {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="earnings">Earnings</SelectItem>
-                  <SelectItem value="economic">Economic Events</SelectItem>
-                  <SelectItem value="political">Political Events</SelectItem>
+                  <SelectItem value="mixed">Economic & Political</SelectItem>
                 </SelectContent>
               </Select>
               
               {eventType === 'earnings' && (
-                <div className="flex items-center space-x-2">
-                  <Button variant="outline" size="sm">
-                    <ChevronLeft className="h-4 w-4" />
-                  </Button>
-                  <span className="text-sm font-medium">Jun 8 - 14</span>
-                  <Button variant="outline" size="sm">
-                    <ChevronRight className="h-4 w-4" />
-                  </Button>
-                  <Button variant="outline" size="sm">Week</Button>
+                <>
+                  <Select value={selectedETF} onValueChange={setSelectedETF}>
+                    <SelectTrigger className="w-48">
+                      <SelectValue placeholder="Select ETF" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All ETFs</SelectItem>
+                      {etfOptions.slice(1).map(etf => (
+                        <SelectItem key={etf} value={etf}>{etf}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <div className="flex items-center space-x-2">
+                    <Button variant="outline" size="sm">
+                      <ChevronLeft className="h-4 w-4" />
+                    </Button>
+                    <span className="text-sm font-medium">Jun 8 - 14</span>
+                    <Button variant="outline" size="sm">
+                      <ChevronRight className="h-4 w-4" />
+                    </Button>
+                    <Button variant="outline" size="sm">Week</Button>
+                  </div>
+                </>
+              )}
+
+              {eventType === 'mixed' && (
+                <div className="flex items-center space-x-4">
+                  <div className="flex items-center space-x-2">
+                    <Checkbox 
+                      id="economic" 
+                      checked={selectedEconomic} 
+                      onCheckedChange={setSelectedEconomic} 
+                    />
+                    <label htmlFor="economic" className="text-sm font-medium">Economic</label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Checkbox 
+                      id="political" 
+                      checked={selectedPolitical} 
+                      onCheckedChange={setSelectedPolitical} 
+                    />
+                    <label htmlFor="political" className="text-sm font-medium">Political</label>
+                  </div>
                 </div>
               )}
             </div>
@@ -489,9 +498,7 @@ const Events = () => {
             </TabsContent>
 
             <TabsContent value="list" className="space-y-4">
-              {eventType === 'earnings' ? renderListView() : (
-                eventType === 'economic' ? renderEconomicEvents() : renderPoliticalEvents()
-              )}
+              {eventType === 'earnings' ? renderListView() : renderCalendarView()}
             </TabsContent>
           </Tabs>
         </div>

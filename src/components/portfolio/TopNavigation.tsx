@@ -1,13 +1,15 @@
 
-import { Search, Home, Bell, Calendar, User, Users } from 'lucide-react';
+import { Home, Users } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Input } from '@/components/ui/input';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { SearchDropdown } from '@/components/search/SearchDropdown';
+import { NotificationDropdown } from '@/components/notifications/NotificationDropdown';
+import { AccountDropdown } from '@/components/account/AccountDropdown';
 
 interface TopNavigationProps {
   activeTab: string;
@@ -23,11 +25,6 @@ export const TopNavigation = ({ activeTab, onTabChange }: TopNavigationProps) =>
     navigate(path);
   };
 
-  const handleCalendarClick = () => {
-    onTabChange('Events');
-    navigate('/events');
-  };
-
   return (
     <div className="border-b border-border bg-card shadow-sm">
       <div className="container mx-auto px-4">
@@ -41,7 +38,7 @@ export const TopNavigation = ({ activeTab, onTabChange }: TopNavigationProps) =>
               WT
             </h1>
             
-            {/* Navigation Items - Closer together */}
+            {/* Navigation Items */}
             <nav className="hidden md:flex items-center space-x-2">
               {/* Home Button */}
               <button
@@ -85,7 +82,6 @@ export const TopNavigation = ({ activeTab, onTabChange }: TopNavigationProps) =>
                         : 'text-muted-foreground hover:text-foreground hover:bg-accent'
                     }`}
                   >
-                    <Search className="h-4 w-4 mr-2" />
                     Research
                   </button>
                 </DropdownMenuTrigger>
@@ -112,39 +108,14 @@ export const TopNavigation = ({ activeTab, onTabChange }: TopNavigationProps) =>
               </DropdownMenu>
             </nav>
             
-            {/* Search Bar - Smaller and to the left */}
-            <div className="relative w-48">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search ticker..."
-                className="pl-10 bg-background border-input"
-              />
-            </div>
+            {/* Search Bar */}
+            <SearchDropdown />
           </div>
 
-          {/* Right side - Account, Calendar, and Notification Icons */}
+          {/* Right side - Notifications and Account */}
           <div className="flex items-center space-x-4">
-            {/* Calendar Icon */}
-            <button 
-              onClick={handleCalendarClick}
-              className="p-2 text-muted-foreground hover:text-foreground hover:bg-accent rounded-md transition-colors"
-            >
-              <Calendar className="h-5 w-5" />
-            </button>
-
-            {/* Notification Bell */}
-            <button className="p-2 text-muted-foreground hover:text-foreground hover:bg-accent rounded-md transition-colors relative">
-              <Bell className="h-5 w-5" />
-              {/* Notification badge */}
-              <div className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
-                3
-              </div>
-            </button>
-
-            {/* Account Icon - Circular */}
-            <button className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center text-primary hover:bg-primary/20 transition-colors">
-              <User className="h-4 w-4" />
-            </button>
+            <NotificationDropdown />
+            <AccountDropdown />
           </div>
         </div>
       </div>
