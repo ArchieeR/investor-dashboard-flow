@@ -1,5 +1,5 @@
 
-import { Search, Home, Bell, Calendar, User, Users, TrendingUp } from 'lucide-react';
+import { Search, Home, Bell, Calendar, User, Users } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Input } from '@/components/ui/input';
 import {
@@ -18,26 +18,31 @@ export const TopNavigation = ({ activeTab, onTabChange }: TopNavigationProps) =>
   const navigate = useNavigate();
   const location = useLocation();
 
-  const handleToolsItemClick = (path: string, tabName: string) => {
+  const handleResearchItemClick = (path: string, tabName: string) => {
     onTabChange(tabName);
     navigate(path);
   };
 
+  const handleCalendarClick = () => {
+    onTabChange('Events');
+    navigate('/events');
+  };
+
   return (
-    <div className="border-b border-border bg-card">
+    <div className="border-b border-border bg-card shadow-sm">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Left side - Logo and Navigation */}
-          <div className="flex items-center space-x-8">
+          <div className="flex items-center space-x-4">
             <h1 
-              className="text-2xl font-bold text-foreground cursor-pointer" 
+              className="text-2xl font-bold text-primary cursor-pointer" 
               onClick={() => navigate('/')}
             >
-              WealthTracker
+              WT
             </h1>
             
-            {/* Navigation Items - Reorganized */}
-            <nav className="hidden md:flex items-center space-x-6">
+            {/* Navigation Items - Closer together */}
+            <nav className="hidden md:flex items-center space-x-2">
               {/* Home Button */}
               <button
                 onClick={() => {
@@ -70,7 +75,7 @@ export const TopNavigation = ({ activeTab, onTabChange }: TopNavigationProps) =>
                 Community
               </button>
 
-              {/* Tools Dropdown */}
+              {/* Research Dropdown */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button
@@ -80,25 +85,19 @@ export const TopNavigation = ({ activeTab, onTabChange }: TopNavigationProps) =>
                         : 'text-muted-foreground hover:text-foreground hover:bg-accent'
                     }`}
                   >
-                    <TrendingUp className="h-4 w-4 mr-2" />
-                    Tools
+                    <Search className="h-4 w-4 mr-2" />
+                    Research
                   </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="start" className="bg-popover border-border">
                   <DropdownMenuItem 
-                    onClick={() => handleToolsItemClick('/news', 'News')}
+                    onClick={() => handleResearchItemClick('/news', 'News')}
                     className="cursor-pointer"
                   >
                     News
                   </DropdownMenuItem>
                   <DropdownMenuItem 
-                    onClick={() => handleToolsItemClick('/earnings', 'Earnings')}
-                    className="cursor-pointer"
-                  >
-                    Earnings
-                  </DropdownMenuItem>
-                  <DropdownMenuItem 
-                    onClick={() => handleToolsItemClick('/events', 'Events')}
+                    onClick={() => handleResearchItemClick('/events', 'Events')}
                     className="cursor-pointer"
                   >
                     Events
@@ -106,21 +105,24 @@ export const TopNavigation = ({ activeTab, onTabChange }: TopNavigationProps) =>
                 </DropdownMenuContent>
               </DropdownMenu>
             </nav>
-          </div>
-
-          {/* Center - Search Bar */}
-          <div className="relative w-72">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search ticker (e.g., VUSA)..."
-              className="pl-10 bg-background border-input"
-            />
+            
+            {/* Search Bar - Smaller and to the left */}
+            <div className="relative w-48">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search ticker..."
+                className="pl-10 bg-background border-input"
+              />
+            </div>
           </div>
 
           {/* Right side - Account, Calendar, and Notification Icons */}
           <div className="flex items-center space-x-4">
             {/* Calendar Icon */}
-            <button className="p-2 text-muted-foreground hover:text-foreground hover:bg-accent rounded-md transition-colors">
+            <button 
+              onClick={handleCalendarClick}
+              className="p-2 text-muted-foreground hover:text-foreground hover:bg-accent rounded-md transition-colors"
+            >
               <Calendar className="h-5 w-5" />
             </button>
 
@@ -133,9 +135,9 @@ export const TopNavigation = ({ activeTab, onTabChange }: TopNavigationProps) =>
               </div>
             </button>
 
-            {/* Account Icon - Far Right */}
-            <button className="p-2 text-muted-foreground hover:text-foreground hover:bg-accent rounded-md transition-colors">
-              <User className="h-5 w-5" />
+            {/* Account Icon - Circular */}
+            <button className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center text-primary hover:bg-primary/20 transition-colors">
+              <User className="h-4 w-4" />
             </button>
           </div>
         </div>

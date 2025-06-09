@@ -23,10 +23,10 @@ const coreStageData = [
 ];
 
 const regionData = [
-  { name: 'US', value: 40 },
+  { name: 'US', value: 45 },
   { name: 'UK', value: 25 },
-  { name: 'Japan', value: 15 },
-  { name: 'Other', value: 20 }
+  { name: 'Japan', value: 18 },
+  { name: 'Europe', value: 12 }
 ];
 
 export const AnalyticsWidgets = () => {
@@ -146,7 +146,7 @@ export const AnalyticsWidgets = () => {
         </CardContent>
       </Card>
 
-      {/* Region Exposure */}
+      {/* Region Exposure - Now with bar chart */}
       <Card>
         <CardHeader className="pb-2">
           <CardTitle className="text-lg">Region Exposure</CardTitle>
@@ -154,15 +154,15 @@ export const AnalyticsWidgets = () => {
         <CardContent>
           <div className="h-48">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={regionData} layout="horizontal">
+              <BarChart data={regionData} layout="horizontal" margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
                 <XAxis type="number" domain={[0, 50]} hide />
-                <YAxis type="category" dataKey="name" width={50} tick={{ fontSize: 12 }} />
+                <YAxis type="category" dataKey="name" width={60} tick={{ fontSize: 12 }} />
                 <Bar dataKey="value" fill="#3b82f6" radius={[0, 4, 4, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
           <div className="mt-2 space-y-1">
-            {regionData.slice(0, 3).map((item) => (
+            {regionData.map((item) => (
               <div key={item.name} className="flex items-center justify-between text-sm">
                 <span className="text-muted-foreground">{item.name}</span>
                 <span className="font-medium">{item.value}%</span>
