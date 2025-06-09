@@ -1,9 +1,15 @@
 
 import { useState } from 'react';
-import { Menu, Bell, Search, User } from 'lucide-react';
+import { Menu, Bell, Search, User, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { NotificationDropdown } from '@/components/notifications/NotificationDropdown';
 import { SearchDropdown } from '@/components/search/SearchDropdown';
 import { AccountDropdown } from '@/components/account/AccountDropdown';
@@ -18,8 +24,7 @@ export const TopNavigation = ({ activeTab, onTabChange }: TopNavigationProps) =>
   const navigate = useNavigate();
   const location = useLocation();
 
-  const tabs = [
-    { name: 'Portfolio', path: '/' },
+  const researchItems = [
     { name: 'News', path: '/news' },
     { name: 'Events', path: '/events' },
     { name: 'ETF Screener', path: '/screener' },
@@ -32,8 +37,13 @@ export const TopNavigation = ({ activeTab, onTabChange }: TopNavigationProps) =>
   };
 
   const getCurrentTab = () => {
-    const currentTab = tabs.find(tab => tab.path === location.pathname);
-    return currentTab ? currentTab.name : activeTab;
+    if (location.pathname === '/') return 'Portfolio';
+    const currentResearchItem = researchItems.find(item => item.path === location.pathname);
+    return currentResearchItem ? 'Research' : activeTab;
+  };
+
+  const isResearchActive = () => {
+    return researchItems.some(item => item.path === location.pathname);
   };
 
   return (
@@ -42,22 +52,45 @@ export const TopNavigation = ({ activeTab, onTabChange }: TopNavigationProps) =>
         <div className="flex items-center justify-between h-16">
           {/* Logo and Navigation */}
           <div className="flex items-center space-x-8">
-            <div className="text-xl font-bold text-primary">Portfolio</div>
+            <div className="text-xl font-bold text-primary">WT</div>
             
             <nav className="hidden md:flex space-x-1">
-              {tabs.map((tab) => (
-                <button
-                  key={tab.name}
-                  onClick={() => handleTabClick(tab.name, tab.path)}
-                  className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
-                    getCurrentTab() === tab.name
-                      ? 'bg-primary text-primary-foreground'
-                      : 'text-muted-foreground hover:text-foreground hover:bg-accent'
-                  }`}
-                >
-                  {tab.name}
-                </button>
-              ))}
+              <button
+                onClick={() => handleTabClick('Portfolio', '/')}
+                className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+                  getCurrentTab() === 'Portfolio'
+                    ? 'bg-primary text-primary-foreground'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+                }`}
+              >
+                Portfolio
+              </button>
+              
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button
+                    className={`px-4 py-2 text-sm font-medium rounded-md transition-colors flex items-center space-x-1 ${
+                      isResearchActive()
+                        ? 'bg-primary text-primary-foreground'
+                        : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+                    }`}
+                  >
+                    <span>Research</span>
+                    <ChevronDown className="h-3 w-3" />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-48">
+                  {researchItems.map((item) => (
+                    <DropdownMenuItem
+                      key={item.name}
+                      onClick={() => handleTabClick(item.name, item.path)}
+                      className="cursor-pointer"
+                    >
+                      {item.name}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
             </nav>
           </div>
 

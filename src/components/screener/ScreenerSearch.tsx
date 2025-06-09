@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { Search, X, TrendingUp, Check } from 'lucide-react';
+import { Search, X, TrendingUp, ChevronUp, ChevronDown } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -58,12 +58,16 @@ const indexes = [
   { name: 'NIFTY 50', value: '24,234.56', change: '+0.89%', positive: true },
   { name: 'HANG SENG', value: '17,890.34', change: '-0.56%', positive: false },
   { name: 'SSE', value: '2,987.45', change: '+0.34%', positive: true },
+  { name: 'DAX', value: '18,456.78', change: '+0.92%', positive: true },
+  { name: 'CAC 40', value: '7,123.45', change: '+0.56%', positive: true },
+  { name: 'FTSE MIB', value: '32,567.89', change: '+0.78%', positive: true },
 ];
 
 export const ScreenerSearch = ({ selectedETFs, onSelectionChange }: ScreenerSearchProps) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [showResults, setShowResults] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(true);
+  const [selectedIndexes, setSelectedIndexes] = useState<string[]>([]);
 
   const filteredETFs = mockETFs.filter(etf =>
     etf.ticker.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -90,8 +94,16 @@ export const ScreenerSearch = ({ selectedETFs, onSelectionChange }: ScreenerSear
     setShowResults(value.length > 0);
   };
 
-  const handleConfirmSelections = () => {
-    setShowSuggestions(false);
+  const handleIndexSelect = (indexName: string) => {
+    setSelectedIndexes(prev => 
+      prev.includes(indexName) 
+        ? prev.filter(name => name !== indexName)
+        : [...prev, indexName]
+    );
+  };
+
+  const toggleSuggestions = () => {
+    setShowSuggestions(!showSuggestions);
   };
 
   return (
@@ -141,15 +153,6 @@ export const ScreenerSearch = ({ selectedETFs, onSelectionChange }: ScreenerSear
                     <TrendingUp className="h-4 w-4 text-green-600" />
                     <span className="text-sm font-medium">Trending Assets</span>
                   </div>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    onClick={handleConfirmSelections}
-                    className="flex items-center space-x-1"
-                  >
-                    <Check className="h-3 w-3" />
-                    <span className="text-xs">Confirm</span>
-                  </Button>
                 </div>
                 <div className="grid grid-cols-4 gap-2">
                   {trendingAssets.map((asset) => (
@@ -169,18 +172,23 @@ export const ScreenerSearch = ({ selectedETFs, onSelectionChange }: ScreenerSear
 
               <div>
                 <div className="text-sm font-medium mb-3">Market Indexes</div>
-                <div className="grid grid-cols-3 gap-2">
+                <div className="grid grid-cols-6 gap-2">
                   {indexes.map((index) => (
-                    <div
+                    <button
                       key={index.name}
-                      className="p-2 border border-border rounded-lg bg-card"
+                      onClick={() => handleIndexSelect(index.name)}
+                      className={`p-2 border rounded-lg text-left transition-colors ${
+                        selectedIndexes.includes(index.name)
+                          ? 'border-primary bg-primary/10'
+                          : 'border-border bg-card hover:bg-accent'
+                      }`}
                     >
                       <div className="font-medium text-xs">{index.name}</div>
                       <div className="text-xs text-muted-foreground">{index.value}</div>
                       <div className={`text-xs font-medium ${index.positive ? 'text-green-600' : 'text-red-600'}`}>
                         {index.change}
                       </div>
-                    </div>
+                    </button>
                   ))}
                 </div>
               </div>
@@ -205,6 +213,30 @@ export const ScreenerSearch = ({ selectedETFs, onSelectionChange }: ScreenerSear
                   </Badge>
                 ))}
               </div>
+            </div>
+          )}
+
+          {/* Collapse/Expand Button */}
+          {searchTerm.length === 0 && (
+            <div className="flex justify-center pt-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={toggleSuggestions}
+                className="flex items-center space-x-1 text-muted-foreground hover:text-foreground"
+              >
+                {showSuggestions ? (
+                  <>
+                    <ChevronUp className="h-4 w-4" />
+                    <span className="text-xs">Collapse</span>
+                  </>
+                ) : (
+                  <>
+                    <ChevronDown className="h-4 w-4" />
+                    <span className="text-xs">Show suggestions</span>
+                  </>
+                )}
+              </Button>
             </div>
           )}
         </div>
