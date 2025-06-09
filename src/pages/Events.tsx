@@ -11,8 +11,9 @@ import { Checkbox } from '@/components/ui/checkbox';
 const Events = () => {
   const [activeTab, setActiveTab] = useState('Events');
   const [selectedWeek, setSelectedWeek] = useState('This Week');
-  const [eventType, setEventType] = useState('earnings');
+  const [eventType, setEventType] = useState('mixed');
   const [selectedETF, setSelectedETF] = useState('all');
+  const [selectedEarnings, setSelectedEarnings] = useState(true);
   const [selectedEconomic, setSelectedEconomic] = useState(true);
   const [selectedPolitical, setSelectedPolitical] = useState(true);
 
@@ -286,13 +287,11 @@ const Events = () => {
   };
 
   const getCalendarData = () => {
-    if (eventType === 'earnings') return earningsData;
-    
     const events = [];
+    if (selectedEarnings) events.push(...earningsData);
     if (selectedEconomic) events.push(...economicEvents);
     if (selectedPolitical) events.push(...politicalEvents);
     
-    // Merge events by date
     const mergedEvents = events.reduce((acc, dayData) => {
       const existingDay = acc.find(d => d.date === dayData.date);
       if (existingDay) {
@@ -413,79 +412,69 @@ const Events = () => {
           <div className="flex items-center justify-between">
             <h1 className="text-3xl font-bold text-foreground">Events</h1>
             <div className="flex items-center space-x-4">
-              <Select value={eventType} onValueChange={setEventType}>
+              <div className="flex items-center space-x-4">
+                <div className="flex items-center space-x-2">
+                  <Checkbox 
+                    id="earnings" 
+                    checked={selectedEarnings} 
+                    onCheckedChange={(checked) => setSelectedEarnings(checked === true)} 
+                  />
+                  <label htmlFor="earnings" className="text-sm font-medium">Earnings</label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Checkbox 
+                    id="economic" 
+                    checked={selectedEconomic} 
+                    onCheckedChange={(checked) => setSelectedEconomic(checked === true)} 
+                  />
+                  <label htmlFor="economic" className="text-sm font-medium">Economic</label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Checkbox 
+                    id="political" 
+                    checked={selectedPolitical} 
+                    onCheckedChange={(checked) => setSelectedPolitical(checked === true)} 
+                  />
+                  <label htmlFor="political" className="text-sm font-medium">Political</label>
+                </div>
+              </div>
+              
+              <Select value={selectedETF} onValueChange={setSelectedETF}>
                 <SelectTrigger className="w-48">
-                  <SelectValue placeholder="Select event type" />
+                  <SelectValue placeholder="Select Asset" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="earnings">Earnings</SelectItem>
-                  <SelectItem value="mixed">Economic & Political</SelectItem>
+                  <SelectItem value="all">All Assets</SelectItem>
+                  {etfOptions.slice(1).map(etf => (
+                    <SelectItem key={etf} value={etf}>{etf}</SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
-              
-              {eventType === 'earnings' && (
-                <>
-                  <Select value={selectedETF} onValueChange={setSelectedETF}>
-                    <SelectTrigger className="w-48">
-                      <SelectValue placeholder="Select ETF" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All ETFs</SelectItem>
-                      {etfOptions.slice(1).map(etf => (
-                        <SelectItem key={etf} value={etf}>{etf}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <div className="flex items-center space-x-2">
-                    <Button variant="outline" size="sm">
-                      <ChevronLeft className="h-4 w-4" />
-                    </Button>
-                    <span className="text-sm font-medium">Jun 8 - 14</span>
-                    <Button variant="outline" size="sm">
-                      <ChevronRight className="h-4 w-4" />
-                    </Button>
-                    <Button variant="outline" size="sm">Week</Button>
-                  </div>
-                </>
-              )}
-
-              {eventType === 'mixed' && (
-                <div className="flex items-center space-x-4">
-                  <div className="flex items-center space-x-2">
-                    <Checkbox 
-                      id="economic" 
-                      checked={selectedEconomic} 
-                      onCheckedChange={setSelectedEconomic} 
-                    />
-                    <label htmlFor="economic" className="text-sm font-medium">Economic</label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Checkbox 
-                      id="political" 
-                      checked={selectedPolitical} 
-                      onCheckedChange={setSelectedPolitical} 
-                    />
-                    <label htmlFor="political" className="text-sm font-medium">Political</label>
-                  </div>
-                </div>
-              )}
+              <div className="flex items-center space-x-2">
+                <Button variant="outline" size="sm">
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
+                <span className="text-sm font-medium">Jun 8 - 14</span>
+                <Button variant="outline" size="sm">
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+                <Button variant="outline" size="sm">Week</Button>
+              </div>
             </div>
           </div>
 
-          {eventType === 'earnings' && (
-            <div className="flex space-x-2 mb-6">
-              {weekOptions.map((option) => (
-                <Button
-                  key={option}
-                  variant={selectedWeek === option ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setSelectedWeek(option)}
-                >
-                  {option}
-                </Button>
-              ))}
-            </div>
-          )}
+          <div className="flex space-x-2 mb-6">
+            {weekOptions.map((option) => (
+              <Button
+                key={option}
+                variant={selectedWeek === option ? "default" : "outline"}
+                size="sm"
+                onClick={() => setSelectedWeek(option)}
+              >
+                {option}
+              </Button>
+            ))}
+          </div>
 
           <Tabs defaultValue="calendar" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
@@ -498,7 +487,7 @@ const Events = () => {
             </TabsContent>
 
             <TabsContent value="list" className="space-y-4">
-              {eventType === 'earnings' ? renderListView() : renderCalendarView()}
+              {selectedEarnings ? renderListView() : renderCalendarView()}
             </TabsContent>
           </Tabs>
         </div>

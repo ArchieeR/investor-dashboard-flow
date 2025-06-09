@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { Search, X, TrendingUp } from 'lucide-react';
+import { Search, X, TrendingUp, Check } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -29,14 +29,41 @@ const mockETFs = [
   { ticker: 'NAVY', name: 'First Trust Naval ETF', region: 'US', theme: 'Defense' },
   { ticker: 'NUCG', name: 'Nuclear Energy Growth ETF', region: 'US', theme: 'Nuclear Energy' },
   { ticker: 'NUCL', name: 'Nuclear Innovation ETF', region: 'US', theme: 'Nuclear Innovation' },
+  { ticker: 'TSLA', name: 'Tesla Inc.', region: 'US', theme: 'Individual Stock' },
+  { ticker: 'MSFT', name: 'Microsoft Corp.', region: 'US', theme: 'Individual Stock' },
+  { ticker: 'GOOGL', name: 'Alphabet Inc.', region: 'US', theme: 'Individual Stock' },
+  { ticker: 'AMZN', name: 'Amazon.com Inc.', region: 'US', theme: 'Individual Stock' },
+  { ticker: 'NVDA', name: 'NVIDIA Corp.', region: 'US', theme: 'Individual Stock' },
+  { ticker: 'META', name: 'Meta Platforms Inc.', region: 'US', theme: 'Individual Stock' },
 ];
 
-const trendingETFs = ['SPY', 'QQQ', 'VTI', 'VWCE', 'NUCG', 'DFNG'];
-const popularETFs = ['EQQQ', 'SGLN', 'IEEM', 'IJPN', 'SEMA', 'NATO'];
+const trendingAssets = [
+  { ticker: 'NUCG', type: 'ETF', change: '+12.4%' },
+  { ticker: 'NVDA', type: 'Stock', change: '+8.2%' },
+  { ticker: 'DFNG', type: 'ETF', change: '+7.1%' },
+  { ticker: 'TSLA', type: 'Stock', change: '+6.8%' },
+  { ticker: 'QQQ', type: 'ETF', change: '+5.3%' },
+  { ticker: 'AAPL', type: 'Stock', change: '+4.9%' },
+  { ticker: 'MSFT', type: 'Stock', change: '+4.2%' },
+  { ticker: 'SPY', type: 'ETF', change: '+3.7%' },
+];
+
+const indexes = [
+  { name: 'S&P 500', value: '5,534.12', change: '+0.85%', positive: true },
+  { name: 'NASDAQ', value: '17,862.23', change: '+1.24%', positive: true },
+  { name: 'FTSE 100', value: '8,234.45', change: '+0.45%', positive: true },
+  { name: 'FTSE 250', value: '20,567.89', change: '-0.23%', positive: false },
+  { name: 'STOXX 600', value: '456.78', change: '+0.67%', positive: true },
+  { name: 'NIKKEI 225', value: '38,567.12', change: '+1.12%', positive: true },
+  { name: 'NIFTY 50', value: '24,234.56', change: '+0.89%', positive: true },
+  { name: 'HANG SENG', value: '17,890.34', change: '-0.56%', positive: false },
+  { name: 'SSE', value: '2,987.45', change: '+0.34%', positive: true },
+];
 
 export const ScreenerSearch = ({ selectedETFs, onSelectionChange }: ScreenerSearchProps) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [showResults, setShowResults] = useState(false);
+  const [showSuggestions, setShowSuggestions] = useState(true);
 
   const filteredETFs = mockETFs.filter(etf =>
     etf.ticker.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -61,6 +88,10 @@ export const ScreenerSearch = ({ selectedETFs, onSelectionChange }: ScreenerSear
     const value = e.target.value;
     setSearchTerm(value);
     setShowResults(value.length > 0);
+  };
+
+  const handleConfirmSelections = () => {
+    setShowSuggestions(false);
   };
 
   return (
@@ -101,49 +132,56 @@ export const ScreenerSearch = ({ selectedETFs, onSelectionChange }: ScreenerSear
             )}
           </div>
 
-          {/* Trending and Popular ETFs - shown when not searching */}
-          {searchTerm.length === 0 && (
+          {/* Trending Assets and Indexes - shown when not searching */}
+          {searchTerm.length === 0 && showSuggestions && (
             <div className="space-y-4">
               <div>
-                <div className="flex items-center space-x-2 mb-3">
-                  <TrendingUp className="h-4 w-4 text-green-600" />
-                  <span className="text-sm font-medium">Trending ETFs</span>
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center space-x-2">
+                    <TrendingUp className="h-4 w-4 text-green-600" />
+                    <span className="text-sm font-medium">Trending Assets</span>
+                  </div>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={handleConfirmSelections}
+                    className="flex items-center space-x-1"
+                  >
+                    <Check className="h-3 w-3" />
+                    <span className="text-xs">Confirm</span>
+                  </Button>
                 </div>
-                <div className="grid grid-cols-3 gap-2">
-                  {trendingETFs.map((ticker) => {
-                    const etf = mockETFs.find(e => e.ticker === ticker);
-                    return (
-                      <button
-                        key={ticker}
-                        onClick={() => handleSelect(ticker)}
-                        disabled={selectedETFs.includes(ticker) || selectedETFs.length >= 6}
-                        className="p-3 border border-border rounded-lg hover:bg-accent disabled:opacity-50 disabled:cursor-not-allowed text-left"
-                      >
-                        <div className="font-medium text-sm">{ticker}</div>
-                        <div className="text-xs text-muted-foreground">{etf?.theme}</div>
-                      </button>
-                    );
-                  })}
+                <div className="grid grid-cols-4 gap-2">
+                  {trendingAssets.map((asset) => (
+                    <button
+                      key={asset.ticker}
+                      onClick={() => handleSelect(asset.ticker)}
+                      disabled={selectedETFs.includes(asset.ticker) || selectedETFs.length >= 6}
+                      className="p-2 border border-border rounded-lg hover:bg-accent disabled:opacity-50 disabled:cursor-not-allowed text-left"
+                    >
+                      <div className="font-medium text-xs">{asset.ticker}</div>
+                      <div className="text-xs text-muted-foreground">{asset.type}</div>
+                      <div className="text-xs text-green-600 font-medium">{asset.change}</div>
+                    </button>
+                  ))}
                 </div>
               </div>
 
               <div>
-                <div className="text-sm font-medium mb-3">Popular ETFs</div>
+                <div className="text-sm font-medium mb-3">Market Indexes</div>
                 <div className="grid grid-cols-3 gap-2">
-                  {popularETFs.map((ticker) => {
-                    const etf = mockETFs.find(e => e.ticker === ticker);
-                    return (
-                      <button
-                        key={ticker}
-                        onClick={() => handleSelect(ticker)}
-                        disabled={selectedETFs.includes(ticker) || selectedETFs.length >= 6}
-                        className="p-3 border border-border rounded-lg hover:bg-accent disabled:opacity-50 disabled:cursor-not-allowed text-left"
-                      >
-                        <div className="font-medium text-sm">{ticker}</div>
-                        <div className="text-xs text-muted-foreground">{etf?.theme}</div>
-                      </button>
-                    );
-                  })}
+                  {indexes.map((index) => (
+                    <div
+                      key={index.name}
+                      className="p-2 border border-border rounded-lg bg-card"
+                    >
+                      <div className="font-medium text-xs">{index.name}</div>
+                      <div className="text-xs text-muted-foreground">{index.value}</div>
+                      <div className={`text-xs font-medium ${index.positive ? 'text-green-600' : 'text-red-600'}`}>
+                        {index.change}
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>

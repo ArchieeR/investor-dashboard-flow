@@ -1,8 +1,33 @@
 
 import { useState } from 'react';
-import { Settings, Wand2, TrendingUp } from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/card';
+import { Settings, Wand2, TrendingUp, ExternalLink } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+
+const mockNews = [
+  {
+    id: 1,
+    title: 'Fed Signals Rate Cut in September',
+    source: 'Reuters',
+    time: '2h ago',
+    sentiment: 'positive'
+  },
+  {
+    id: 2,
+    title: 'Tech Stocks Rally on AI News',
+    source: 'Bloomberg',
+    time: '4h ago',
+    sentiment: 'positive'
+  },
+  {
+    id: 3,
+    title: 'Oil Prices Drop Amid Supply Concerns',
+    source: 'CNBC',
+    time: '6h ago',
+    sentiment: 'negative'
+  }
+];
 
 export const NotificationWidget = () => {
   return (
@@ -17,6 +42,37 @@ export const NotificationWidget = () => {
           <div>
             <div className="text-xs text-muted-foreground uppercase tracking-wide">TOTAL GAIN</div>
             <div className="text-sm font-semibold text-green-600">£9,667.72 (11.52%)</div>
+          </div>
+        </div>
+
+        {/* News Widget */}
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <h3 className="text-sm font-semibold">Market News</h3>
+            <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+              <ExternalLink className="h-3 w-3" />
+            </Button>
+          </div>
+          <div className="space-y-2">
+            {mockNews.map((article) => (
+              <div key={article.id} className="p-2 rounded-lg border bg-card hover:bg-accent/50 transition-colors cursor-pointer">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="flex-1 min-w-0">
+                    <h4 className="text-xs font-medium leading-tight line-clamp-2">{article.title}</h4>
+                    <div className="flex items-center justify-between mt-1">
+                      <span className="text-xs text-muted-foreground">{article.source}</span>
+                      <span className="text-xs text-muted-foreground">{article.time}</span>
+                    </div>
+                  </div>
+                  <Badge 
+                    variant={article.sentiment === 'positive' ? 'default' : 'destructive'} 
+                    className="text-xs px-1.5 py-0.5 flex-shrink-0"
+                  >
+                    {article.sentiment === 'positive' ? '+' : '-'}
+                  </Badge>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
 
