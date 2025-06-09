@@ -15,7 +15,6 @@ interface TopNavigationProps {
 }
 
 export const TopNavigation = ({ activeTab, onTabChange }: TopNavigationProps) => {
-  const [isSearchFocused, setIsSearchFocused] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -65,10 +64,7 @@ export const TopNavigation = ({ activeTab, onTabChange }: TopNavigationProps) =>
           {/* Search and Actions */}
           <div className="flex items-center space-x-4">
             <div className="relative">
-              <SearchDropdown 
-                isSearchFocused={isSearchFocused}
-                setIsSearchFocused={setIsSearchFocused}
-              />
+              <SearchDropdown />
             </div>
             
             <NotificationDropdown />
