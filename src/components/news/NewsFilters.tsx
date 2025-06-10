@@ -2,6 +2,32 @@
 import { useState } from 'react';
 import { BarChart3, TrendingDown, TrendingUp, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+
+const assetOptions = [
+  'All assets',
+  'SPY',
+  'QQQ',
+  'VTI', 
+  'EQQQ',
+  'VWCE',
+  'AAPL',
+  'SGLN',
+  'IIND',
+  'IJPN',
+  'SEMA',
+  'IEEM',
+  'DFNG',
+  'NATO',
+  'NAVY',
+  'NUCG',
+  'NUCL'
+];
 
 export const NewsFilters = () => {
   const [importance, setImportance] = useState('HIGH');
@@ -36,10 +62,25 @@ export const NewsFilters = () => {
         </div>
         
         <div className="flex items-center space-x-2">
-          <Button variant="outline" className="flex items-center space-x-2">
-            <span>{assetFilter}</span>
-            <ChevronDown className="h-4 w-4" />
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="flex items-center space-x-2">
+                <span>{assetFilter}</span>
+                <ChevronDown className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48 max-h-60 overflow-y-auto">
+              {assetOptions.map((asset) => (
+                <DropdownMenuItem
+                  key={asset}
+                  onClick={() => setAssetFilter(asset)}
+                  className="cursor-pointer"
+                >
+                  {asset}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
     </div>

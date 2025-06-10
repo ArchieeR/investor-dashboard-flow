@@ -100,6 +100,7 @@ const BrokerComparer = () => {
       return {
         ...broker,
         annualCost: Math.round(annualCost),
+        monthlyCost: Math.round(annualCost / 12),
         costPercentage: ((annualCost / aumValue) * 100).toFixed(3)
       };
     }).sort((a, b) => a.annualCost - b.annualCost);
@@ -210,6 +211,7 @@ const BrokerComparer = () => {
                           </td>
                           <td className="py-3 px-2">
                             <div className="font-semibold text-lg">{formatCurrency(broker.annualCost)}</div>
+                            <div className="text-sm text-muted-foreground">{formatCurrency(broker.monthlyCost)}/month</div>
                           </td>
                           <td className="py-3 px-2">
                             <div className="text-sm">{broker.costPercentage}%</div>

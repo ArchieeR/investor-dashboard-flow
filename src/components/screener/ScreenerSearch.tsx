@@ -77,7 +77,11 @@ export const ScreenerSearch = ({ selectedETFs, onSelectionChange }: ScreenerSear
   );
 
   const handleSelect = (ticker: string) => {
-    if (selectedETFs.length < 6 && !selectedETFs.includes(ticker)) {
+    if (selectedETFs.includes(ticker)) {
+      // Deselect if already selected
+      onSelectionChange(selectedETFs.filter(etf => etf !== ticker));
+    } else if (selectedETFs.length < 6) {
+      // Select if not already selected and under limit
       onSelectionChange([...selectedETFs, ticker]);
     }
     setSearchTerm('');
@@ -126,10 +130,17 @@ export const ScreenerSearch = ({ selectedETFs, onSelectionChange }: ScreenerSear
                   <button
                     key={etf.ticker}
                     onClick={() => handleSelect(etf.ticker)}
-                    disabled={selectedETFs.includes(etf.ticker) || selectedETFs.length >= 6}
-                    className="w-full text-left px-4 py-3 hover:bg-accent disabled:opacity-50 disabled:cursor-not-allowed border-b border-border last:border-0"
+                    disabled={!selectedETFs.includes(etf.ticker) && selectedETFs.length >= 6}
+                    className={`w-full text-left px-4 py-3 hover:bg-accent disabled:opacity-50 disabled:cursor-not-allowed border-b border-border last:border-0 ${
+                      selectedETFs.includes(etf.ticker) ? 'bg-primary/10 border-primary/20' : ''
+                    }`}
                   >
-                    <div className="font-medium">{etf.ticker}</div>
+                    <div className="font-medium flex items-center justify-between">
+                      {etf.ticker}
+                      {selectedETFs.includes(etf.ticker) && (
+                        <Badge variant="secondary" className="text-xs">Selected</Badge>
+                      )}
+                    </div>
                     <div className="text-sm text-muted-foreground">{etf.name}</div>
                     <div className="flex space-x-2 mt-1">
                       <Badge variant="outline" className="text-xs">{etf.region}</Badge>
@@ -159,8 +170,10 @@ export const ScreenerSearch = ({ selectedETFs, onSelectionChange }: ScreenerSear
                     <button
                       key={asset.ticker}
                       onClick={() => handleSelect(asset.ticker)}
-                      disabled={selectedETFs.includes(asset.ticker) || selectedETFs.length >= 6}
-                      className="p-2 border border-border rounded-lg hover:bg-accent disabled:opacity-50 disabled:cursor-not-allowed text-left"
+                      disabled={!selectedETFs.includes(asset.ticker) && selectedETFs.length >= 6}
+                      className={`p-2 border border-border rounded-lg hover:bg-accent disabled:opacity-50 disabled:cursor-not-allowed text-left ${
+                        selectedETFs.includes(asset.ticker) ? 'bg-primary/10 border-primary' : ''
+                      }`}
                     >
                       <div className="font-medium text-xs">{asset.ticker}</div>
                       <div className="text-xs text-muted-foreground">{asset.type}</div>

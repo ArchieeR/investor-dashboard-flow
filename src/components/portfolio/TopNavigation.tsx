@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { Menu, Bell, Search, User, ChevronDown } from 'lucide-react';
+import { Menu, Bell, Search, User, ChevronDown, Home, Wrench, Users, Book } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -38,6 +38,8 @@ export const TopNavigation = ({ activeTab, onTabChange }: TopNavigationProps) =>
 
   const getCurrentTab = () => {
     if (location.pathname === '/') return 'Portfolio';
+    if (location.pathname === '/community') return 'Community';
+    if (location.pathname === '/learn') return 'Learn';
     const currentResearchItem = researchItems.find(item => item.path === location.pathname);
     return currentResearchItem ? 'Research' : activeTab;
   };
@@ -57,13 +59,14 @@ export const TopNavigation = ({ activeTab, onTabChange }: TopNavigationProps) =>
             <nav className="hidden md:flex space-x-1">
               <button
                 onClick={() => handleTabClick('Portfolio', '/')}
-                className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+                className={`px-4 py-2 text-sm font-medium rounded-md transition-colors flex items-center space-x-2 ${
                   getCurrentTab() === 'Portfolio'
                     ? 'bg-primary text-primary-foreground'
                     : 'text-muted-foreground hover:text-foreground hover:bg-accent'
                 }`}
               >
-                Portfolio
+                <Home className="h-4 w-4" />
+                <span>Portfolio</span>
               </button>
               
               <DropdownMenu>
@@ -75,6 +78,7 @@ export const TopNavigation = ({ activeTab, onTabChange }: TopNavigationProps) =>
                         : 'text-muted-foreground hover:text-foreground hover:bg-accent'
                     }`}
                   >
+                    <Wrench className="h-4 w-4" />
                     <span>Research</span>
                     <ChevronDown className="h-3 w-3" />
                   </button>
@@ -91,6 +95,30 @@ export const TopNavigation = ({ activeTab, onTabChange }: TopNavigationProps) =>
                   ))}
                 </DropdownMenuContent>
               </DropdownMenu>
+
+              <button
+                onClick={() => handleTabClick('Community', '/community')}
+                className={`px-4 py-2 text-sm font-medium rounded-md transition-colors flex items-center space-x-2 ${
+                  getCurrentTab() === 'Community'
+                    ? 'bg-primary text-primary-foreground'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+                }`}
+              >
+                <Users className="h-4 w-4" />
+                <span>Community</span>
+              </button>
+
+              <button
+                onClick={() => handleTabClick('Learn', '/learn')}
+                className={`px-4 py-2 text-sm font-medium rounded-md transition-colors flex items-center space-x-2 ${
+                  getCurrentTab() === 'Learn'
+                    ? 'bg-primary text-primary-foreground'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+                }`}
+              >
+                <Book className="h-4 w-4" />
+                <span>Learn</span>
+              </button>
             </nav>
           </div>
 

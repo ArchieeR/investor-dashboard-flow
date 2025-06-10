@@ -11,6 +11,7 @@ import Community from "./pages/Community";
 import Events from "./pages/Events";
 import ETFScreener from "./pages/ETFScreener";
 import BrokerComparer from "./pages/BrokerComparer";
+import Learn from "./pages/Learn";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -29,6 +30,7 @@ const App = () => (
           <Route path="/broker-comparer" element={<BrokerComparer />} />
           <Route path="/asset/:ticker" element={<AssetDetail />} />
           <Route path="/community" element={<Community />} />
+          <Route path="/learn" element={<Learn />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

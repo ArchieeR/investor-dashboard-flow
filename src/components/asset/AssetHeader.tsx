@@ -1,6 +1,6 @@
 
 import { Button } from '@/components/ui/button';
-import { Download } from 'lucide-react';
+import { Download, ExternalLink } from 'lucide-react';
 
 interface AssetHeaderProps {
   asset: {
@@ -18,6 +18,10 @@ interface AssetHeaderProps {
 
 export const AssetHeader = ({ asset }: AssetHeaderProps) => {
   const isPositive = asset.dayChange >= 0;
+  
+  const getGoogleFinanceUrl = () => {
+    return `https://www.google.com/finance/quote/${asset.ticker}:${asset.exchange}`;
+  };
   
   return (
     <div className="space-y-4">
@@ -37,10 +41,20 @@ export const AssetHeader = ({ asset }: AssetHeaderProps) => {
           </div>
         </div>
         
-        <Button variant="outline" className="flex items-center space-x-2">
-          <Download className="h-4 w-4" />
-          <span>Download Fact Sheet</span>
-        </Button>
+        <div className="flex items-center space-x-2">
+          <Button 
+            variant="outline" 
+            className="flex items-center space-x-2"
+            onClick={() => window.open(getGoogleFinanceUrl(), '_blank')}
+          >
+            <ExternalLink className="h-4 w-4" />
+            <span>Compare on Google Finance</span>
+          </Button>
+          <Button variant="outline" className="flex items-center space-x-2">
+            <Download className="h-4 w-4" />
+            <span>Download Fact Sheet</span>
+          </Button>
+        </div>
       </div>
       
       <div className="flex items-center space-x-4">
