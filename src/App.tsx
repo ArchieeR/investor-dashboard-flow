@@ -14,6 +14,7 @@ import BrokerComparer from "./pages/BrokerComparer";
 import Broker from "./pages/Broker";
 import Comparer from "./pages/Comparer";
 import Learn from "./pages/Learn";
+import CompanyFilings from "./pages/CompanyFilings";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -32,6 +33,7 @@ const App = () => (
           <Route path="/broker-comparer" element={<BrokerComparer />} />
           <Route path="/broker" element={<Broker />} />
           <Route path="/comparer" element={<Comparer />} />
+          <Route path="/company-filings" element={<CompanyFilings />} />
           <Route path="/asset/:ticker" element={<AssetDetail />} />
           <Route path="/community" element={<Community />} />
           <Route path="/learn" element={<Learn />} />
