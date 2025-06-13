@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { TopNavigation } from '@/components/portfolio/TopNavigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -10,7 +11,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 
 const Events = () => {
   const [activeTab, setActiveTab] = useState('Events');
-  const [selectedWeek, setSelectedWeek] = useState('This Week');
+  const [selectedWeek, setSelectedWeek] = useState('Today');
   const [eventType, setEventType] = useState('mixed');
   const [selectedETF, setSelectedETF] = useState('all');
   const [selectedEarnings, setSelectedEarnings] = useState(true);
@@ -18,234 +19,92 @@ const Events = () => {
   const [selectedPolitical, setSelectedPolitical] = useState(true);
   const [selectedDividends, setSelectedDividends] = useState(true);
 
-  const weekOptions = ['Yesterday', 'Today', 'Tomorrow', 'This Week', 'Next Week'];
-
+  const weekOptions = ['Today', 'Tomorrow', 'This Week', 'Next Week'];
   const etfOptions = ['all', 'SPY', 'QQQ', 'VTI', 'EQQQ', 'VWCE', 'SGLN', 'IIND', 'IJPN', 'IJXP', 'SEMA', 'IEEM'];
 
-  // Earnings data with random tickers
+  // Get current date for filtering
+  const today = new Date();
+  const tomorrow = new Date(today);
+  tomorrow.setDate(today.getDate() + 1);
+
+  // Helper function to check if date matches selected filter
+  const isDateInRange = (eventDate: string, range: string) => {
+    const event = new Date(eventDate);
+    const todayStart = new Date(today);
+    todayStart.setHours(0, 0, 0, 0);
+    
+    switch(range) {
+      case 'Today':
+        return event.toDateString() === today.toDateString();
+      case 'Tomorrow':
+        return event.toDateString() === tomorrow.toDateString();
+      case 'This Week':
+        const weekStart = new Date(todayStart);
+        weekStart.setDate(today.getDate() - today.getDay());
+        const weekEnd = new Date(weekStart);
+        weekEnd.setDate(weekStart.getDate() + 6);
+        return event >= weekStart && event <= weekEnd;
+      case 'Next Week':
+        const nextWeekStart = new Date(todayStart);
+        nextWeekStart.setDate(today.getDate() - today.getDay() + 7);
+        const nextWeekEnd = new Date(nextWeekStart);
+        nextWeekEnd.setDate(nextWeekStart.getDate() + 6);
+        return event >= nextWeekStart && event <= nextWeekEnd;
+      default:
+        return true;
+    }
+  };
+
+  // Dynamic events data with actual dates
   const earningsData = [
     {
-      date: 'Mon 9',
+      date: 'Mon 16',
+      fullDate: '2025-06-16',
       count: 2,
       events: [
-        {
-          time: '7:00 AM',
-          ticker: 'AAPL',
-          company: 'Apple Inc.',
-          type: 'earnings'
-        },
-        {
-          time: '4:30 PM',
-          ticker: 'MSFT',
-          company: 'Microsoft Corp.',
-          type: 'earnings'
-        }
+        { time: '7:00 AM', ticker: 'AAPL', company: 'Apple Inc.', type: 'earnings' },
+        { time: '4:30 PM', ticker: 'MSFT', company: 'Microsoft Corp.', type: 'earnings' }
       ]
     },
     {
-      date: 'Tue 10', 
+      date: 'Tue 17', 
+      fullDate: '2025-06-17',
       count: 4,
       events: [
-        {
-          time: '6:00 AM',
-          ticker: 'GOOGL',
-          company: 'Alphabet Inc.',
-          type: 'earnings'
-        },
-        {
-          time: '7:30 AM',
-          ticker: 'AMZN', 
-          company: 'Amazon.com Inc.',
-          type: 'earnings'
-        },
-        {
-          time: '4:15 PM',
-          ticker: 'TSLA',
-          company: 'Tesla Inc.',
-          type: 'earnings'
-        },
-        {
-          time: '5:00 PM',
-          ticker: 'NVDA',
-          company: 'NVIDIA Corp.',
-          type: 'earnings'
-        }
+        { time: '6:00 AM', ticker: 'GOOGL', company: 'Alphabet Inc.', type: 'earnings' },
+        { time: '7:30 AM', ticker: 'AMZN', company: 'Amazon.com Inc.', type: 'earnings' },
+        { time: '4:15 PM', ticker: 'TSLA', company: 'Tesla Inc.', type: 'earnings' },
+        { time: '5:00 PM', ticker: 'NVDA', company: 'NVIDIA Corp.', type: 'earnings' }
       ]
     },
     {
-      date: 'Wed 11',
+      date: 'Wed 18',
+      fullDate: '2025-06-18',
       count: 3,
       events: [
-        {
-          time: '7:00 AM',
-          ticker: 'META',
-          company: 'Meta Platforms Inc.',
-          type: 'earnings'
-        },
-        {
-          time: '4:30 PM',
-          ticker: 'NFLX',
-          company: 'Netflix Inc.',
-          type: 'earnings'
-        },
-        {
-          time: '5:15 PM',
-          ticker: 'CRM',
-          company: 'Salesforce Inc.',
-          type: 'earnings'
-        }
+        { time: '7:00 AM', ticker: 'META', company: 'Meta Platforms Inc.', type: 'earnings' },
+        { time: '4:30 PM', ticker: 'NFLX', company: 'Netflix Inc.', type: 'earnings' },
+        { time: '5:15 PM', ticker: 'CRM', company: 'Salesforce Inc.', type: 'earnings' }
       ]
-    },
-    {
-      date: 'Thu 12',
-      count: 5,
-      events: [
-        {
-          time: '6:30 AM',
-          ticker: 'ORCL',
-          company: 'Oracle Corp.',
-          type: 'earnings'
-        },
-        {
-          time: '7:00 AM',
-          ticker: 'ADBE',
-          company: 'Adobe Inc.',
-          type: 'earnings'
-        },
-        {
-          time: '4:30 PM',
-          ticker: 'PYPL',
-          company: 'PayPal Holdings Inc.',
-          type: 'earnings'
-        }
-      ]
-    },
-    {
-      date: 'Fri 13',
-      count: 6,
-      events: [
-        {
-          time: '6:00 AM',
-          ticker: 'INTC',
-          company: 'Intel Corp.',
-          type: 'earnings'
-        },
-        {
-          time: '7:30 AM',
-          ticker: 'AMD',
-          company: 'Advanced Micro Devices',
-          type: 'earnings'
-        },
-        {
-          time: '4:00 PM',
-          ticker: 'QCOM',
-          company: 'Qualcomm Inc.',
-          type: 'earnings'
-        },
-        {
-          time: '5:00 PM',
-          ticker: 'AVGO',
-          company: 'Broadcom Inc.',
-          type: 'earnings'
-        }
-      ]
-    },
-    {
-      date: 'Sat 14',
-      count: 0,
-      events: []
     }
   ];
 
-  // Dividend events data
   const dividendEvents = [
-    { date: 'Mon 9', count: 1, events: [{ time: 'Ex-Date', ticker: 'VUSA', company: 'Vanguard S&P 500', type: 'dividend', amount: '£0.52' }] },
-    { date: 'Tue 10', count: 0, events: [] },
-    { date: 'Wed 11', count: 2, events: [
+    { date: 'Mon 16', fullDate: '2025-06-16', count: 1, events: [{ time: 'Ex-Date', ticker: 'VUSA', company: 'Vanguard S&P 500', type: 'dividend', amount: '£0.52' }] },
+    { date: 'Wed 18', fullDate: '2025-06-18', count: 2, events: [
       { time: 'Ex-Date', ticker: 'VTI', company: 'Vanguard Total Stock', type: 'dividend', amount: '£0.29' },
       { time: 'Pay Date', ticker: 'EQQQ', company: 'Invesco NASDAQ-100', type: 'dividend', amount: '£0.16' }
-    ]},
-    { date: 'Thu 12', count: 0, events: [] },
-    { date: 'Fri 13', count: 1, events: [{ time: 'Pay Date', ticker: 'CS1', company: 'Amundi IBEX 35', type: 'dividend', amount: '£0.18' }] },
-    { date: 'Sat 14', count: 0, events: [] }
+    ]}
   ];
 
-  // Economic events data with calendar structure
   const economicEvents = [
-    { date: 'Mon 9', count: 1, events: [{ time: '2:00 PM', title: 'Federal Reserve Interest Rate Decision', type: 'Economic', impact: 'High' }] },
-    { date: 'Tue 10', count: 0, events: [] },
-    { date: 'Wed 11', count: 1, events: [{ time: '8:45 AM', title: 'ECB Monetary Policy Meeting', type: 'Economic', impact: 'High' }] },
-    { date: 'Thu 12', count: 1, events: [{ time: '8:30 AM', title: 'US Non-Farm Payrolls', type: 'Economic', impact: 'High' }] },
-    { date: 'Fri 13', count: 0, events: [] },
-    { date: 'Sat 14', count: 0, events: [] }
+    { date: 'Mon 16', fullDate: '2025-06-16', count: 1, events: [{ time: '2:00 PM', title: 'Federal Reserve Interest Rate Decision', type: 'Economic', impact: 'High' }] },
+    { date: 'Wed 18', fullDate: '2025-06-18', count: 1, events: [{ time: '8:45 AM', title: 'ECB Monetary Policy Meeting', type: 'Economic', impact: 'High' }] }
   ];
 
-  // Political events data with calendar structure
   const politicalEvents = [
-    { date: 'Mon 9', count: 1, events: [{ time: '9:00 AM', title: 'G7 Summit', type: 'Political', impact: 'Medium' }] },
-    { date: 'Tue 10', count: 1, events: [{ time: '10:00 AM', title: 'EU Trade Policy Meeting', type: 'Political', impact: 'Medium' }] },
-    { date: 'Wed 11', count: 0, events: [] },
-    { date: 'Thu 12', count: 0, events: [] },
-    { date: 'Fri 13', count: 0, events: [] },
-    { date: 'Sat 14', count: 0, events: [] }
-  ];
-
-  // Economic events data
-  const economicEventsOld = [
-    {
-      id: 1,
-      title: 'Federal Reserve Interest Rate Decision',
-      date: '2025-06-15',
-      time: '2:00 PM EST',
-      location: 'Washington, D.C.',
-      type: 'Economic',
-      impact: 'High',
-      description: 'The Federal Reserve will announce their decision on interest rates.'
-    },
-    {
-      id: 2,
-      title: 'ECB Monetary Policy Meeting',
-      date: '2025-06-18',
-      time: '8:45 AM CET',
-      location: 'Frankfurt, Germany',
-      type: 'Economic',
-      impact: 'High',
-      description: 'European Central Bank monetary policy decision.'
-    },
-    {
-      id: 3,
-      title: 'US Non-Farm Payrolls',
-      date: '2025-06-20',
-      time: '8:30 AM EST',
-      location: 'Washington, D.C.',
-      type: 'Economic',
-      impact: 'High',
-      description: 'Monthly employment data release.'
-    }
-  ];
-
-  // Political events data
-  const politicalEventsOld = [
-    {
-      id: 1,
-      title: 'G7 Summit',
-      date: '2025-06-14',
-      time: '9:00 AM',
-      location: 'Tokyo, Japan',
-      type: 'Political',
-      impact: 'Medium',
-      description: 'Annual meeting of G7 leaders.'
-    },
-    {
-      id: 2,
-      title: 'EU Trade Policy Meeting',
-      date: '2025-06-16',
-      time: '10:00 AM CET',
-      location: 'Brussels, Belgium',
-      type: 'Political',
-      impact: 'Medium',
-      description: 'EU trade policy discussions.'
-    }
+    { date: 'Mon 16', fullDate: '2025-06-16', count: 1, events: [{ time: '9:00 AM', title: 'G7 Summit', type: 'Political', impact: 'Medium' }] },
+    { date: 'Tue 17', fullDate: '2025-06-17', count: 1, events: [{ time: '10:00 AM', title: 'EU Trade Policy Meeting', type: 'Political', impact: 'Medium' }] }
   ];
 
   // List view data
@@ -259,7 +118,7 @@ const Events = () => {
       surprise: '0.01',
       surprisePercent: '0.69%',
       revenue: { forecast: '14.96B', actual: '15B' },
-      date: '2025-06-05',
+      date: '2025-06-16',
       time: '2025-04-30',
       trend: 'up'
     },
@@ -272,20 +131,7 @@ const Events = () => {
       surprise: '0.07',
       surprisePercent: '10.55%',
       revenue: { forecast: '1.1B', actual: '1.1B' },
-      date: '2025-06-03',
-      time: '2025-04-30',
-      trend: 'up'
-    },
-    {
-      ticker: 'FERG',
-      company: 'FERGUSON ENTERPRISES INC.',
-      marketCap: '41.61B',
-      epsEstimate: '2.01',
-      reportedEps: '2.50',
-      surprise: '0.49',
-      surprisePercent: '24.19%',
-      revenue: { forecast: '7.42B', actual: '7.62B' },
-      date: '2025-06-03',
+      date: '2025-06-17',
       time: '2025-04-30',
       trend: 'up'
     }
@@ -307,7 +153,12 @@ const Events = () => {
     if (selectedPolitical) events.push(...politicalEvents);
     if (selectedDividends) events.push(...dividendEvents);
     
-    const mergedEvents = events.reduce((acc, dayData) => {
+    // Filter events based on selected date range
+    const filteredEvents = events.filter(dayData => 
+      isDateInRange(dayData.fullDate, selectedWeek)
+    );
+    
+    const mergedEvents = filteredEvents.reduce((acc, dayData) => {
       const existingDay = acc.find(d => d.date === dayData.date);
       if (existingDay) {
         existingDay.events.push(...dayData.events);
@@ -318,14 +169,22 @@ const Events = () => {
       return acc;
     }, [] as any[]);
     
-    return mergedEvents.length > 0 ? mergedEvents : earningsData.map(d => ({ ...d, events: [], count: 0 }));
+    return mergedEvents;
   };
 
   const renderCalendarView = () => {
     const calendarData = getCalendarData();
     
+    if (calendarData.length === 0) {
+      return (
+        <div className="text-center py-8">
+          <p className="text-muted-foreground">No events found for {selectedWeek}</p>
+        </div>
+      );
+    }
+    
     return (
-      <div className="grid grid-cols-7 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         {calendarData.map((day, index) => (
           <Card key={index} className={`min-h-[300px] ${day.count > 0 ? 'hover:shadow-md' : ''} transition-shadow`}>
             <CardHeader className="pb-2">
@@ -375,6 +234,18 @@ const Events = () => {
   };
 
   const renderListView = () => {
+    const filteredListData = listViewData.filter(item => 
+      isDateInRange(item.date, selectedWeek)
+    );
+
+    if (filteredListData.length === 0) {
+      return (
+        <div className="text-center py-8">
+          <p className="text-muted-foreground">No earnings data found for {selectedWeek}</p>
+        </div>
+      );
+    }
+
     return (
       <div className="overflow-x-auto">
         <table className="w-full">
@@ -393,7 +264,7 @@ const Events = () => {
             </tr>
           </thead>
           <tbody>
-            {listViewData.map((earning) => (
+            {filteredListData.map((earning) => (
               <tr key={earning.ticker} className="border-b hover:bg-accent/50">
                 <td className="p-2">
                   <div className="flex items-center space-x-2">
@@ -478,16 +349,6 @@ const Events = () => {
                   ))}
                 </SelectContent>
               </Select>
-              <div className="flex items-center space-x-2">
-                <Button variant="outline" size="sm">
-                  <ChevronLeft className="h-4 w-4" />
-                </Button>
-                <span className="text-sm font-medium">Jun 8 - 14</span>
-                <Button variant="outline" size="sm">
-                  <ChevronRight className="h-4 w-4" />
-                </Button>
-                <Button variant="outline" size="sm">Week</Button>
-              </div>
             </div>
           </div>
 

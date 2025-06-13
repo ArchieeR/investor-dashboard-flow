@@ -32,18 +32,19 @@ const assetOptions = [
 ];
 
 interface NewsFiltersProps {
-  onImportanceChange?: (importance: string) => void;
+  onImportanceChange?: (importance: string[]) => void;
   onAssetChange?: (asset: string) => void;
-  currentImportance?: string;
+  currentImportance?: string[];
   currentAsset?: string;
 }
 
 export const NewsFilters = ({ 
   onImportanceChange, 
   onAssetChange, 
-  currentImportance = 'HIGH',
+  currentImportance = ['HIGH'],
   currentAsset = 'All assets'
 }: NewsFiltersProps) => {
+  const [selectedImportance, setSelectedImportance] = useState<string[]>(currentImportance);
   const [reputableSources, setReputableSources] = useState(true);
   const [otherSources, setOtherSources] = useState(true);
 
@@ -53,23 +54,32 @@ export const NewsFilters = ({
       label: 'HIGH', 
       icon: BarChart3,
       activeClass: 'bg-green-500 text-white hover:bg-green-600',
-      inactiveClass: 'bg-green-100 text-green-700 hover:bg-green-200'
+      inactiveClass: 'bg-white text-green-700 hover:bg-green-50 border-green-300'
     },
     { 
       value: 'MED', 
       label: 'MED', 
       icon: TrendingUp,
       activeClass: 'bg-yellow-500 text-white hover:bg-yellow-600',
-      inactiveClass: 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200'
+      inactiveClass: 'bg-white text-yellow-700 hover:bg-yellow-50 border-yellow-300'
     },
     { 
       value: 'LOW', 
       label: 'LOW', 
       icon: TrendingDown,
       activeClass: 'bg-red-500 text-white hover:bg-red-600',
-      inactiveClass: 'bg-red-100 text-red-700 hover:bg-red-200'
+      inactiveClass: 'bg-white text-red-700 hover:bg-red-50 border-red-300'
     }
   ];
+
+  const toggleImportance = (importance: string) => {
+    const newSelection = selectedImportance.includes(importance)
+      ? selectedImportance.filter(item => item !== importance)
+      : [...selectedImportance, importance];
+    
+    setSelectedImportance(newSelection);
+    onImportanceChange?.(newSelection);
+  };
 
   return (
     <div className="sticky top-16 z-30 bg-background border-b border-border pb-4">
@@ -80,9 +90,9 @@ export const NewsFilters = ({
               key={option.value}
               variant="ghost"
               size="sm"
-              onClick={() => onImportanceChange?.(option.value)}
+              onClick={() => toggleImportance(option.value)}
               className={`flex items-center space-x-2 border ${
-                currentImportance === option.value 
+                selectedImportance.includes(option.value)
                   ? option.activeClass
                   : option.inactiveClass
               }`}

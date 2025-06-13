@@ -7,7 +7,7 @@ import { SentimentLogo } from '@/components/news/SentimentLogo';
 
 const News = () => {
   const [activeTab, setActiveTab] = useState('News');
-  const [importanceFilter, setImportanceFilter] = useState('HIGH');
+  const [importanceFilter, setImportanceFilter] = useState<string[]>(['HIGH']);
   const [assetFilter, setAssetFilter] = useState('All assets');
 
   return (
@@ -30,10 +30,9 @@ const News = () => {
             currentAsset={assetFilter}
           />
           
-          {/* News table with full page scrolling */}
           <div className="pb-8">
             <NewsTable 
-              importanceFilter={importanceFilter}
+              importanceFilter={importanceFilter.join(',')}
               assetFilter={assetFilter}
             />
           </div>
