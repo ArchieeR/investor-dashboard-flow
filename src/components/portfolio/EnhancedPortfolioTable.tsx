@@ -1,6 +1,5 @@
-
-import { useState, useMemo } from 'react';
-import { ChevronDown, ChevronRight } from 'lucide-react';
+import { useState, useMemo, useRef, useCallback } from 'react';
+import { ChevronDown, ChevronRight, GripVertical } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { EditableCell } from './EditableCell';
@@ -22,7 +21,7 @@ const mockHoldings: PortfolioHolding[] = [
     fx: 'GBP',
     price: 7.15,
     deltaPercent: 0.15,
-    quantity: 28, // £200 / £7.15
+    quantity: 28,
     value: 200,
     notes: '',
     type: 'ETF'
@@ -38,7 +37,7 @@ const mockHoldings: PortfolioHolding[] = [
     fx: 'GBP',
     price: 40.20,
     deltaPercent: 0.25,
-    quantity: 7, // £300 / £40.20
+    quantity: 7,
     value: 300,
     notes: '',
     type: 'ETF'
@@ -54,7 +53,7 @@ const mockHoldings: PortfolioHolding[] = [
     fx: 'GBP',
     price: 25.00,
     deltaPercent: 0.35,
-    quantity: 16, // £400 / £25
+    quantity: 16,
     value: 400,
     notes: '',
     type: 'ETF'
@@ -70,7 +69,7 @@ const mockHoldings: PortfolioHolding[] = [
     fx: 'GBP',
     price: 20.00,
     deltaPercent: 0.12,
-    quantity: 25, // £500 / £20
+    quantity: 25,
     value: 500,
     notes: '',
     type: 'ETF'
@@ -86,7 +85,7 @@ const mockHoldings: PortfolioHolding[] = [
     fx: 'GBP',
     price: 15.00,
     deltaPercent: 0.08,
-    quantity: 100, // £1500 / £15
+    quantity: 100,
     value: 1500,
     notes: '',
     type: 'ETF'
@@ -102,7 +101,7 @@ const mockHoldings: PortfolioHolding[] = [
     fx: 'GBP',
     price: 18.00,
     deltaPercent: 0.18,
-    quantity: 22, // £400 / £18
+    quantity: 22,
     value: 400,
     notes: '',
     type: 'ETF'
@@ -118,7 +117,7 @@ const mockHoldings: PortfolioHolding[] = [
     fx: 'GBP',
     price: 10.00,
     deltaPercent: 0.05,
-    quantity: 40, // £400 / £10
+    quantity: 40,
     value: 400,
     notes: '',
     type: 'ETF'
@@ -136,7 +135,7 @@ const mockHoldings: PortfolioHolding[] = [
     fx: 'GBP',
     price: 50.00,
     deltaPercent: 0.42,
-    quantity: 40, // £2000 / £50
+    quantity: 40,
     value: 2000,
     notes: '',
     type: 'ETF'
@@ -152,7 +151,7 @@ const mockHoldings: PortfolioHolding[] = [
     fx: 'GBP',
     price: 60.00,
     deltaPercent: 0.38,
-    quantity: 33, // £2000 / £60
+    quantity: 33,
     value: 2000,
     notes: '',
     type: 'ETF'
@@ -281,6 +280,9 @@ export const EnhancedPortfolioTable = () => {
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set(['CORE', 'SATELLITE', 'ALTS', 'Stocks & Shares ISA', 'Lifetime ISA', 'Crypto Account', 'Cash ISA', 'Alternative Assets']));
   const [sortBy, setSortBy] = useState<keyof PortfolioHolding>('value');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+  const [draggedColumn, setDraggedColumn] = useState<string | null>(null);
+  const [draggedGroup, setDraggedGroup] = useState<string | null>(null);
+  const [groupOrder, setGroupOrder] = useState<string[]>([]);
 
   const visibleColumns = columns.filter(col => col.visible);
   const totalPortfolioValue = holdings.reduce((sum, holding) => sum + holding.value, 0);
@@ -299,23 +301,45 @@ export const EnhancedPortfolioTable = () => {
   }, [holdings, sortBy, sortOrder]);
 
   const groupedHoldings = useMemo((): GroupedHoldings => {
+    let grouped: GroupedHoldings = {};
+    
     if (viewMode === 'strategy') {
-      return sortedHoldings.reduce((acc, holding) => {
+      grouped = sortedHoldings.reduce((acc, holding) => {
         const category = holding.category;
         if (!acc[category]) acc[category] = [];
         acc[category].push(holding);
         return acc;
       }, {} as GroupedHoldings);
     } else if (viewMode === 'account') {
-      return sortedHoldings.reduce((acc, holding) => {
+      grouped = sortedHoldings.reduce((acc, holding) => {
         const account = holding.account;
         if (!acc[account]) acc[account] = [];
         acc[account].push(holding);
         return acc;
       }, {} as GroupedHoldings);
+    } else {
+      grouped = { 'All Holdings': sortedHoldings };
     }
-    return { 'All Holdings': sortedHoldings };
-  }, [sortedHoldings, viewMode]);
+
+    // Apply custom group ordering if it exists
+    if (groupOrder.length > 0 && viewMode === 'account') {
+      const orderedGrouped: GroupedHoldings = {};
+      groupOrder.forEach(groupKey => {
+        if (grouped[groupKey]) {
+          orderedGrouped[groupKey] = grouped[groupKey];
+        }
+      });
+      // Add any remaining groups that weren't in the custom order
+      Object.keys(grouped).forEach(key => {
+        if (!orderedGrouped[key]) {
+          orderedGrouped[key] = grouped[key];
+        }
+      });
+      return orderedGrouped;
+    }
+
+    return grouped;
+  }, [sortedHoldings, viewMode, groupOrder]);
 
   const handleSort = (field: keyof PortfolioHolding) => {
     if (sortBy === field) {
@@ -354,6 +378,64 @@ export const EnhancedPortfolioTable = () => {
     });
   };
 
+  // Column drag handlers
+  const handleColumnDragStart = useCallback((e: React.DragEvent, columnKey: string) => {
+    setDraggedColumn(columnKey);
+    e.dataTransfer.effectAllowed = 'move';
+  }, []);
+
+  const handleColumnDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+  }, []);
+
+  const handleColumnDrop = useCallback((e: React.DragEvent, targetColumnKey: string) => {
+    e.preventDefault();
+    if (!draggedColumn || draggedColumn === targetColumnKey) return;
+
+    const draggedIndex = columns.findIndex(col => col.key === draggedColumn);
+    const targetIndex = columns.findIndex(col => col.key === targetColumnKey);
+
+    if (draggedIndex === -1 || targetIndex === -1) return;
+
+    const newColumns = [...columns];
+    const [draggedCol] = newColumns.splice(draggedIndex, 1);
+    newColumns.splice(targetIndex, 0, draggedCol);
+
+    setColumns(newColumns);
+    setDraggedColumn(null);
+  }, [draggedColumn, columns]);
+
+  // Group drag handlers for account view
+  const handleGroupDragStart = useCallback((e: React.DragEvent, groupKey: string) => {
+    if (viewMode !== 'account') return;
+    setDraggedGroup(groupKey);
+    e.dataTransfer.effectAllowed = 'move';
+  }, [viewMode]);
+
+  const handleGroupDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+  }, []);
+
+  const handleGroupDrop = useCallback((e: React.DragEvent, targetGroupKey: string) => {
+    e.preventDefault();
+    if (!draggedGroup || draggedGroup === targetGroupKey || viewMode !== 'account') return;
+
+    const currentOrder = groupOrder.length > 0 ? groupOrder : Object.keys(groupedHoldings);
+    const draggedIndex = currentOrder.indexOf(draggedGroup);
+    const targetIndex = currentOrder.indexOf(targetGroupKey);
+
+    if (draggedIndex === -1 || targetIndex === -1) return;
+
+    const newOrder = [...currentOrder];
+    const [draggedItem] = newOrder.splice(draggedIndex, 1);
+    newOrder.splice(targetIndex, 0, draggedItem);
+
+    setGroupOrder(newOrder);
+    setDraggedGroup(null);
+  }, [draggedGroup, groupOrder, groupedHoldings, viewMode]);
+
   const getTypeColor = (type: string) => {
     const colors = {
       'ETF': 'bg-blue-100 text-blue-800',
@@ -383,11 +465,18 @@ export const EnhancedPortfolioTable = () => {
         {visibleColumns.map((column) => (
           <th
             key={column.key}
-            className="pb-3 text-sm font-medium text-muted-foreground cursor-pointer hover:text-foreground text-left px-2"
+            className={`pb-3 text-sm font-medium text-muted-foreground cursor-pointer hover:text-foreground text-left px-2 ${
+              draggedColumn === column.key ? 'opacity-50' : ''
+            }`}
             style={{ width: column.width, minWidth: column.width }}
+            draggable
+            onDragStart={(e) => handleColumnDragStart(e, column.key)}
+            onDragOver={handleColumnDragOver}
+            onDrop={(e) => handleColumnDrop(e, column.key)}
             onClick={() => handleSort(column.key)}
           >
             <div className="flex items-center gap-1">
+              <GripVertical className="h-3 w-3 opacity-50" />
               {column.label}
               {sortBy === column.key && (
                 <span className="text-xs">{sortOrder === 'asc' ? '↑' : '↓'}</span>
@@ -458,12 +547,21 @@ export const EnhancedPortfolioTable = () => {
           const groupPercentage = ((groupTotal / totalPortfolioValue) * 100).toFixed(1);
           
           return (
-            <div key={groupKey}>
+            <div key={groupKey} className={draggedGroup === groupKey ? 'opacity-50' : ''}>
               <div
-                className="flex items-center justify-between p-3 bg-muted/50 rounded cursor-pointer hover:bg-muted"
+                className={`flex items-center justify-between p-3 bg-muted/50 rounded cursor-pointer hover:bg-muted ${
+                  viewMode === 'account' ? 'cursor-move' : ''
+                }`}
+                draggable={viewMode === 'account'}
+                onDragStart={(e) => handleGroupDragStart(e, groupKey)}
+                onDragOver={handleGroupDragOver}
+                onDrop={(e) => handleGroupDrop(e, groupKey)}
                 onClick={() => toggleGroup(groupKey)}
               >
                 <div className="flex items-center gap-2">
+                  {viewMode === 'account' && (
+                    <GripVertical className="h-4 w-4 opacity-50" />
+                  )}
                   {isExpanded ? (
                     <ChevronDown className="h-4 w-4" />
                   ) : (

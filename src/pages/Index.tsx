@@ -17,9 +17,9 @@ import { CountryExposure } from '@/components/widgets/CountryExposure';
 const Index = () => {
   const [activeTab, setActiveTab] = useState('Portfolio');
 
-  // 10-column grid with all widgets as 2x2 - creates 2 rows of 5 widgets
+  // Fixed 10-column grid with consistent 2x2 square widgets (5 per row, 2 rows)
   const [gridItems, setGridItems] = useState<GridItem[]>([
-    // Top Row - 5 widgets across 10 columns (2x2 each)
+    // Top Row - 5 widgets across 10 columns (2x2 each for square appearance)
     {
       id: 'sector-allocation',
       x: 0,
@@ -71,7 +71,7 @@ const Index = () => {
       minHeight: 2
     },
     
-    // Bottom Row - 5 widgets across 10 columns (2x2 each)
+    // Bottom Row - 5 widgets across 10 columns (2x2 each for square appearance)
     {
       id: 'dividends',
       x: 0,
@@ -143,13 +143,13 @@ const Index = () => {
           <h3 className="text-lg font-semibold mb-6 text-muted-foreground">
             Portfolio Widgets
           </h3>
-          {/* 10-column grid with full width */}
+          {/* 10-column grid with fixed square aspect ratio */}
           <div className="w-full">
             <GridSystem 
               items={gridItems} 
               onItemsChange={setGridItems}
               columns={10}
-              cellSize={120}
+              cellSize={140}
               allowOverlap={false}
             />
           </div>

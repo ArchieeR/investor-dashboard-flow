@@ -7,12 +7,11 @@ import { NotificationDropdown } from '@/components/notifications/NotificationDro
 import { AccountDropdown } from '@/components/account/AccountDropdown';
 import { CalendarButton } from './CalendarButton';
 import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-} from "@/components/ui/navigation-menu";
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface TopNavigationProps {
   activeTab: string;
@@ -21,6 +20,7 @@ interface TopNavigationProps {
 
 export const TopNavigation = ({ activeTab, onTabChange }: TopNavigationProps) => {
   const navigate = useNavigate();
+  const [isResearchOpen, setIsResearchOpen] = useState(false);
 
   const handleTabClick = (tabName: string, path: string) => {
     onTabChange(tabName);
@@ -30,6 +30,12 @@ export const TopNavigation = ({ activeTab, onTabChange }: TopNavigationProps) =>
   const handleCalendarClick = () => {
     onTabChange('Events');
     navigate('/events');
+  };
+
+  const handleResearchToolClick = (toolName: string, path: string) => {
+    onTabChange(toolName);
+    navigate(path);
+    setIsResearchOpen(false);
   };
 
   const researchTools = [
@@ -58,31 +64,31 @@ export const TopNavigation = ({ activeTab, onTabChange }: TopNavigationProps) =>
                 Portfolio
               </Button>
 
-              <NavigationMenu>
-                <NavigationMenuList>
-                  <NavigationMenuItem>
-                    <NavigationMenuTrigger 
-                      className={`text-sm ${activeTab.includes('Research') || ['News', 'Events', 'Screener', 'Broker', 'Comparer'].includes(activeTab) ? 'bg-accent' : ''}`}
+              <DropdownMenu open={isResearchOpen} onOpenChange={setIsResearchOpen}>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant={activeTab.includes('Research') || ['News', 'Events', 'Screener', 'Broker', 'Comparer'].includes(activeTab) ? "default" : "ghost"}
+                    className="text-sm"
+                  >
+                    Research Tools
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent 
+                  align="start" 
+                  className="w-48 z-[200] bg-popover border-border shadow-lg"
+                  sideOffset={4}
+                >
+                  {researchTools.map((tool) => (
+                    <DropdownMenuItem
+                      key={tool.name}
+                      className="cursor-pointer focus:bg-accent focus:text-accent-foreground"
+                      onClick={() => handleResearchToolClick(tool.name, tool.path)}
                     >
-                      Research Tools
-                    </NavigationMenuTrigger>
-                    <NavigationMenuContent>
-                      <div className="w-48 p-2">
-                        {researchTools.map((tool) => (
-                          <Button
-                            key={tool.name}
-                            variant="ghost"
-                            className="w-full justify-start text-sm mb-1"
-                            onClick={() => handleTabClick(tool.name, tool.path)}
-                          >
-                            {tool.name}
-                          </Button>
-                        ))}
-                      </div>
-                    </NavigationMenuContent>
-                  </NavigationMenuItem>
-                </NavigationMenuList>
-              </NavigationMenu>
+                      {tool.name}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
 
               <Button
                 variant={activeTab === 'Community' ? "default" : "ghost"}

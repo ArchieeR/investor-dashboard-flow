@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -13,6 +13,8 @@ interface ColumnManagerProps {
 
 export const ColumnManager = ({ columns, onColumnsChange }: ColumnManagerProps) => {
   const [isOpen, setIsOpen] = useState(false);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   const toggleColumn = (key: string, visible: boolean) => {
     const updatedColumns = columns.map(col => 
@@ -21,22 +23,43 @@ export const ColumnManager = ({ columns, onColumnsChange }: ColumnManagerProps) 
     onColumnsChange(updatedColumns);
   };
 
+  // Close dialog when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        isOpen && 
+        cardRef.current && 
+        buttonRef.current &&
+        !cardRef.current.contains(event.target as Node) &&
+        !buttonRef.current.contains(event.target as Node)
+      ) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isOpen]);
+
   if (!isOpen) {
     return (
       <Button
+        ref={buttonRef}
         variant="outline"
         size="sm"
         onClick={() => setIsOpen(true)}
         className="flex items-center gap-2"
       >
         <Settings className="h-4 w-4" />
-        Columns
+        Settings
       </Button>
     );
   }
 
   return (
-    <Card className="absolute right-0 top-12 w-80 z-50 shadow-lg">
+    <Card ref={cardRef} className="absolute right-0 top-12 w-80 z-[150] shadow-lg bg-popover border-border">
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
           <CardTitle className="text-sm">Manage Columns</CardTitle>
