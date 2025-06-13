@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { TopNavigation } from '@/components/portfolio/TopNavigation';
 import { PortfolioChart } from '@/components/portfolio/PortfolioChart';
 import { NotificationWidget } from '@/components/portfolio/NotificationWidget';
-import { PortfolioTable } from '@/components/portfolio/PortfolioTable';
+import { EnhancedPortfolioTable } from '@/components/portfolio/EnhancedPortfolioTable';
 import { AnalyticsWidgets } from '@/components/portfolio/AnalyticsWidgets';
 import { NotesWidget } from '@/components/portfolio/NotesWidget';
 import { DividendTracker } from '@/components/portfolio/DividendTracker';
@@ -28,8 +28,8 @@ const Index = () => {
           </div>
         </div>
 
-        {/* Portfolio Table */}
-        <PortfolioTable />
+        {/* Enhanced Portfolio Table */}
+        <EnhancedPortfolioTable />
 
         {/* Analytics Widgets */}
         <AnalyticsWidgets />
