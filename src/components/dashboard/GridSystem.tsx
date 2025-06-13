@@ -1,5 +1,4 @@
-
-import { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { GripVertical } from 'lucide-react';
 
@@ -96,7 +95,7 @@ export const GridSystem = ({ items, onItemsChange, columns = 8 }: GridSystemProp
   }, []);
 
   // Add event listeners
-  React.useEffect(() => {
+  useEffect(() => {
     if (draggedItem || resizingItem) {
       document.addEventListener('mousemove', handleMouseMove);
       document.addEventListener('mouseup', handleMouseUp);
