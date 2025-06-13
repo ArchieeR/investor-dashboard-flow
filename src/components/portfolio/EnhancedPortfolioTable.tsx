@@ -1,7 +1,8 @@
 import { useState, useMemo, useRef, useCallback } from 'react';
-import { ChevronDown, ChevronRight, GripVertical } from 'lucide-react';
+import { ChevronDown, ChevronRight, GripVertical, EyeOff, Eye } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { EditableCell } from './EditableCell';
 import { ColumnManager } from './ColumnManager';
 import { ViewModeSelector } from './ViewModeSelector';
@@ -278,6 +279,8 @@ export const EnhancedPortfolioTable = () => {
   const [columns, setColumns] = useState<ColumnConfig[]>(defaultColumns);
   const [viewMode, setViewMode] = useState<ViewMode>('general');
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set(['CORE', 'SATELLITE', 'ALTS', 'Stocks & Shares ISA', 'Lifetime ISA', 'Crypto Account', 'Cash ISA', 'Alternative Assets']));
+  const [hiddenAssets, setHiddenAssets] = useState<Set<string>>(new Set());
+  const [showHiddenAssets, setShowHiddenAssets] = useState(false);
   const [sortBy, setSortBy] = useState<keyof PortfolioHolding>('value');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [draggedColumn, setDraggedColumn] = useState<string | null>(null);
@@ -285,10 +288,28 @@ export const EnhancedPortfolioTable = () => {
   const [groupOrder, setGroupOrder] = useState<string[]>([]);
 
   const visibleColumns = columns.filter(col => col.visible);
-  const totalPortfolioValue = holdings.reduce((sum, holding) => sum + holding.value, 0);
+  
+  // Filter holdings based on hidden assets
+  const filteredHoldings = holdings.filter(holding => !hiddenAssets.has(holding.id));
+  const hiddenHoldingsList = holdings.filter(holding => hiddenAssets.has(holding.id));
+  
+  const totalPortfolioValue = filteredHoldings.reduce((sum, holding) => sum + holding.value, 0);
+  const hiddenValue = hiddenHoldingsList.reduce((sum, holding) => sum + holding.value, 0);
+
+  const handleHideAsset = (holdingId: string) => {
+    setHiddenAssets(prev => new Set([...prev, holdingId]));
+  };
+
+  const handleUnhideAsset = (holdingId: string) => {
+    setHiddenAssets(prev => {
+      const newSet = new Set(prev);
+      newSet.delete(holdingId);
+      return newSet;
+    });
+  };
 
   const sortedHoldings = useMemo(() => {
-    return [...holdings].sort((a, b) => {
+    return [...filteredHoldings].sort((a, b) => {
       const aVal = a[sortBy];
       const bVal = b[sortBy];
       const multiplier = sortOrder === 'asc' ? 1 : -1;
@@ -298,7 +319,7 @@ export const EnhancedPortfolioTable = () => {
       }
       return String(aVal).localeCompare(String(bVal)) * multiplier;
     });
-  }, [holdings, sortBy, sortOrder]);
+  }, [filteredHoldings, sortBy, sortOrder]);
 
   const groupedHoldings = useMemo((): GroupedHoldings => {
     let grouped: GroupedHoldings = {};
@@ -462,6 +483,11 @@ export const EnhancedPortfolioTable = () => {
   const renderTableHeader = () => (
     <thead>
       <tr className="border-b">
+        {viewMode === 'general' && (
+          <th className="pb-3 text-sm font-medium text-muted-foreground text-left px-2 w-16">
+            Actions
+          </th>
+        )}
         {visibleColumns.map((column) => (
           <th
             key={column.key}
@@ -488,8 +514,20 @@ export const EnhancedPortfolioTable = () => {
     </thead>
   );
 
-  const renderHoldingRow = (holding: PortfolioHolding) => (
+  const renderHoldingRow = (holding: PortfolioHolding, showHideButton: boolean = false) => (
     <tr key={holding.id} className="border-b hover:bg-accent transition-colors">
+      {showHideButton && (
+        <td className="py-2 px-2 w-16">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => handleHideAsset(holding.id)}
+            className="h-7 w-7 p-0"
+          >
+            <EyeOff className="h-3 w-3" />
+          </Button>
+        </td>
+      )}
       {visibleColumns.map((column) => (
         <td 
           key={column.key} 
@@ -525,15 +563,106 @@ export const EnhancedPortfolioTable = () => {
             <table className="w-full" style={{ tableLayout: 'fixed' }}>
               {renderTableHeader()}
               <tbody>
-                {sortedHoldings.map(holding => renderHoldingRow(holding))}
+                {sortedHoldings.map(holding => renderHoldingRow(holding, true))}
               </tbody>
             </table>
           </div>
+          
+          {/* Hidden Assets Section */}
+          {hiddenHoldingsList.length > 0 && (
+            <div className="border-t pt-4">
+              <div 
+                className="flex items-center justify-between p-3 bg-muted/50 rounded cursor-pointer hover:bg-muted"
+                onClick={() => setShowHiddenAssets(!showHiddenAssets)}
+              >
+                <div className="flex items-center gap-2">
+                  {showHiddenAssets ? (
+                    <ChevronDown className="h-4 w-4" />
+                  ) : (
+                    <ChevronRight className="h-4 w-4" />
+                  )}
+                  <span className="font-medium">Hidden Assets</span>
+                  <span className="text-sm text-muted-foreground">
+                    ({hiddenHoldingsList.length} hidden)
+                  </span>
+                </div>
+                <div className="text-right">
+                  <div className="font-semibold">£{hiddenValue.toLocaleString()}</div>
+                  <div className="text-sm text-muted-foreground">Hidden value</div>
+                </div>
+              </div>
+              
+              {showHiddenAssets && (
+                <div className="overflow-x-auto ml-6 mt-2">
+                  <table className="w-full" style={{ tableLayout: 'fixed' }}>
+                    <thead>
+                      <tr className="border-b">
+                        <th className="pb-3 text-sm font-medium text-muted-foreground text-left px-2 w-16">
+                          Actions
+                        </th>
+                        {visibleColumns.map((column) => (
+                          <th
+                            key={column.key}
+                            className="pb-3 text-sm font-medium text-muted-foreground text-left px-2"
+                            style={{ width: column.width, minWidth: column.width }}
+                          >
+                            {column.label}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {hiddenHoldingsList.map(holding => (
+                        <tr key={holding.id} className="border-b hover:bg-accent transition-colors opacity-60">
+                          <td className="py-2 px-2 w-16">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleUnhideAsset(holding.id)}
+                              className="h-7 w-7 p-0"
+                            >
+                              <Eye className="h-3 w-3" />
+                            </Button>
+                          </td>
+                          {visibleColumns.map((column) => (
+                            <td 
+                              key={column.key} 
+                              className="py-2 px-2" 
+                              style={{ width: column.width, minWidth: column.width }}
+                            >
+                              {column.key === 'type' ? (
+                                <Badge variant="secondary" className={getTypeColor(holding.type)}>
+                                  {holding.type}
+                                </Badge>
+                              ) : column.key === 'deltaPercent' ? (
+                                <span className={holding.deltaPercent >= 0 ? 'text-green-600' : 'text-red-600'}>
+                                  {holding.deltaPercent >= 0 ? '+' : ''}{holding.deltaPercent}%
+                                </span>
+                              ) : (
+                                <span className="text-sm">{holding[column.key]}</span>
+                              )}
+                            </td>
+                          ))}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          )}
+          
           <div className="border-t pt-4">
             <div className="flex justify-between items-center font-semibold text-lg">
-              <span>Portfolio Total:</span>
+              <span>Visible Total:</span>
               <span>£{totalPortfolioValue.toLocaleString()}</span>
             </div>
+            {hiddenValue > 0 && (
+              <div className="flex justify-between items-center text-sm text-muted-foreground mt-1">
+                <span>Hidden Value:</span>
+                <span>£{hiddenValue.toLocaleString()}</span>
+              </div>
+            )}
           </div>
         </div>
       );

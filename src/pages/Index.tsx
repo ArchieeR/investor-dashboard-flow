@@ -131,20 +131,22 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       <TopNavigation activeTab={activeTab} onTabChange={setActiveTab} />
       
-      {/* Full width container with padding only on the outer edges */}
-      <div className="px-6 py-6">
+      {/* Full width container with no padding constraints */}
+      <div className="w-full py-6">
         {/* Fixed Top Section - Portfolio Chart, Notification Widget, and Holdings Table */}
-        <div className="max-w-none mx-auto">
+        <div className="px-6">
           <FixedTopSection />
         </div>
         
-        {/* Widget Grid Section - Full page width with 10 columns */}
+        {/* Widget Grid Section - Full screen width, no padding constraints */}
         <div className="mt-8">
-          <h3 className="text-lg font-semibold mb-6 text-muted-foreground">
-            Portfolio Widgets
-          </h3>
-          {/* 10-column grid with fixed square aspect ratio */}
-          <div className="w-full">
+          <div className="px-6 mb-6">
+            <h3 className="text-lg font-semibold text-muted-foreground">
+              Portfolio Widgets
+            </h3>
+          </div>
+          {/* Grid container takes full screen width */}
+          <div className="w-full px-6">
             <GridSystem 
               items={gridItems} 
               onItemsChange={setGridItems}

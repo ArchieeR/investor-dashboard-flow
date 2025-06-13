@@ -6,6 +6,7 @@ import { SearchDropdown } from '@/components/search/SearchDropdown';
 import { NotificationDropdown } from '@/components/notifications/NotificationDropdown';
 import { AccountDropdown } from '@/components/account/AccountDropdown';
 import { CalendarButton } from './CalendarButton';
+import { ChevronDown } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -43,7 +44,7 @@ export const TopNavigation = ({ activeTab, onTabChange }: TopNavigationProps) =>
     { name: 'Events', path: '/events' },
     { name: 'Screener', path: '/screener' },
     { name: 'Broker', path: '/broker' },
-    { name: 'Comparer', path: '/comparer' },
+    { name: 'Broker Comparison', path: '/broker-comparer' },
   ];
 
   return (
@@ -67,10 +68,11 @@ export const TopNavigation = ({ activeTab, onTabChange }: TopNavigationProps) =>
               <DropdownMenu open={isResearchOpen} onOpenChange={setIsResearchOpen}>
                 <DropdownMenuTrigger asChild>
                   <Button
-                    variant={activeTab.includes('Research') || ['News', 'Events', 'Screener', 'Broker', 'Comparer'].includes(activeTab) ? "default" : "ghost"}
-                    className="text-sm"
+                    variant={activeTab.includes('Research') || ['News', 'Events', 'Screener', 'Broker', 'Broker Comparison'].includes(activeTab) ? "default" : "ghost"}
+                    className="text-sm flex items-center gap-1"
                   >
                     Research Tools
+                    <ChevronDown className="h-3 w-3" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent 
