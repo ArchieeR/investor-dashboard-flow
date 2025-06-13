@@ -11,6 +11,8 @@ import Community from "./pages/Community";
 import Events from "./pages/Events";
 import ETFScreener from "./pages/ETFScreener";
 import BrokerComparer from "./pages/BrokerComparer";
+import Broker from "./pages/Broker";
+import Comparer from "./pages/Comparer";
 import Learn from "./pages/Learn";
 import NotFound from "./pages/NotFound";
 
@@ -28,6 +30,8 @@ const App = () => (
           <Route path="/events" element={<Events />} />
           <Route path="/screener" element={<ETFScreener />} />
           <Route path="/broker-comparer" element={<BrokerComparer />} />
+          <Route path="/broker" element={<Broker />} />
+          <Route path="/comparer" element={<Comparer />} />
           <Route path="/asset/:ticker" element={<AssetDetail />} />
           <Route path="/community" element={<Community />} />
           <Route path="/learn" element={<Learn />} />

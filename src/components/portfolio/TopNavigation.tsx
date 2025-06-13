@@ -36,7 +36,8 @@ export const TopNavigation = ({ activeTab, onTabChange }: TopNavigationProps) =>
     { name: 'News', path: '/news' },
     { name: 'Events', path: '/events' },
     { name: 'Screener', path: '/screener' },
-    { name: 'Broker Comparer', path: '/broker-comparer' },
+    { name: 'Broker', path: '/broker' },
+    { name: 'Comparer', path: '/comparer' },
   ];
 
   return (
@@ -61,7 +62,7 @@ export const TopNavigation = ({ activeTab, onTabChange }: TopNavigationProps) =>
                 <NavigationMenuList>
                   <NavigationMenuItem>
                     <NavigationMenuTrigger 
-                      className={`text-sm ${activeTab.includes('Research') ? 'bg-accent' : ''}`}
+                      className={`text-sm ${activeTab.includes('Research') || ['News', 'Events', 'Screener', 'Broker', 'Comparer'].includes(activeTab) ? 'bg-accent' : ''}`}
                     >
                       Research Tools
                     </NavigationMenuTrigger>
