@@ -37,49 +37,56 @@ export const GridSystem = ({
   const [ghostPosition, setGhostPosition] = useState<{ x: number; y: number; width: number; height: number } | null>(null);
   const gridRef = useRef<HTMLDivElement>(null);
 
-  // Check if a position would cause collision with other items
-  const hasCollision = (x: number, y: number, width: number, height: number, excludeId?: string) => {
-    if (allowOverlap) return false;
-    
-    return items.some(item => {
-      if (item.id === excludeId) return false;
+  // Comprehensive collision resolution that handles cascading displacement
+  const resolveAllCollisions = (newItems: GridItem[]) => {
+    if (allowOverlap) return newItems;
+
+    let workingItems = [...newItems];
+    let hasChanges = true;
+    let iterations = 0;
+    const maxIterations = 50; // Prevent infinite loops
+
+    // Sort by y position to handle displacement from top to bottom
+    const sortByPosition = (items: GridItem[]) => 
+      items.sort((a, b) => a.y === b.y ? a.x - b.x : a.y - b.y);
+
+    while (hasChanges && iterations < maxIterations) {
+      hasChanges = false;
+      iterations++;
       
-      return !(
-        x >= item.x + item.width ||
-        x + width <= item.x ||
-        y >= item.y + item.height ||
-        y + height <= item.y
-      );
-    });
-  };
+      workingItems = sortByPosition(workingItems);
 
-  // Push other widgets down when placing/resizing a widget
-  const pushWidgetsDown = (newX: number, newY: number, newWidth: number, newHeight: number, excludeId?: string) => {
-    if (allowOverlap) return items;
+      for (let i = 0; i < workingItems.length; i++) {
+        const currentItem = workingItems[i];
+        if (currentItem.fixed) continue;
 
-    const updatedItems = [...items];
-    const conflictingItems = items.filter(item => {
-      if (item.id === excludeId || item.fixed) return false;
-      
-      // Check if this item conflicts with the new position
-      return !(
-        newX >= item.x + item.width ||
-        newX + newWidth <= item.x ||
-        newY >= item.y + item.height ||
-        newY + newHeight <= item.y
-      );
-    });
+        // Find all items this one collides with
+        const collidingItems = workingItems.filter((other, otherIndex) => {
+          if (otherIndex === i || other.fixed) return false;
+          
+          return !(
+            currentItem.x >= other.x + other.width ||
+            currentItem.x + currentItem.width <= other.x ||
+            currentItem.y >= other.y + other.height ||
+            currentItem.y + currentItem.height <= other.y
+          );
+        });
 
-    // Push conflicting items down
-    conflictingItems.forEach(item => {
-      const itemIndex = updatedItems.findIndex(i => i.id === item.id);
-      if (itemIndex !== -1) {
-        const pushedY = newY + newHeight;
-        updatedItems[itemIndex] = { ...item, y: pushedY };
+        // Push colliding items down
+        for (const collidingItem of collidingItems) {
+          const itemIndex = workingItems.findIndex(item => item.id === collidingItem.id);
+          if (itemIndex !== -1) {
+            const newY = currentItem.y + currentItem.height;
+            if (workingItems[itemIndex].y < newY) {
+              workingItems[itemIndex] = { ...workingItems[itemIndex], y: newY };
+              hasChanges = true;
+            }
+          }
+        }
       }
-    });
+    }
 
-    return updatedItems;
+    return workingItems;
   };
 
   const handleMouseDown = useCallback((e: React.MouseEvent, itemId: string, type: 'drag' | 'resize') => {
@@ -113,7 +120,6 @@ export const GridSystem = ({
       const constrainedX = Math.max(0, Math.min(gridX, columns - item.width));
       const constrainedY = Math.max(0, gridY);
 
-      // Show ghost position
       setGhostPosition({ x: constrainedX, y: constrainedY, width: item.width, height: item.height });
     }
 
@@ -124,54 +130,33 @@ export const GridSystem = ({
       const newWidth = Math.max(item.minWidth || 2, Math.min(4, Math.floor((e.clientX - gridRect.left - item.x * cellSize) / cellSize)));
       const newHeight = Math.max(item.minHeight || 2, Math.min(4, Math.floor((e.clientY - gridRect.top - item.y * cellSize) / cellSize)));
 
-      // Show ghost resize
       setGhostPosition({ x: item.x, y: item.y, width: newWidth, height: newHeight });
     }
   }, [draggedItem, resizingItem, items, dragOffset, cellSize, columns]);
 
   const handleMouseUp = useCallback(() => {
     if (draggedItem && ghostPosition) {
-      const item = items.find(i => i.id === draggedItem);
-      if (item) {
-        const updatedItems = pushWidgetsDown(
-          ghostPosition.x, 
-          ghostPosition.y, 
-          ghostPosition.width, 
-          ghostPosition.height, 
-          draggedItem
-        );
-        
-        const finalItems = updatedItems.map(i => {
-          if (i.id === draggedItem) {
-            return { ...i, x: ghostPosition.x, y: ghostPosition.y };
-          }
-          return i;
-        });
-        
-        onItemsChange(finalItems);
-      }
+      const updatedItems = items.map(item => {
+        if (item.id === draggedItem) {
+          return { ...item, x: ghostPosition.x, y: ghostPosition.y };
+        }
+        return item;
+      });
+      
+      const resolvedItems = resolveAllCollisions(updatedItems);
+      onItemsChange(resolvedItems);
     }
 
     if (resizingItem && ghostPosition) {
-      const item = items.find(i => i.id === resizingItem);
-      if (item) {
-        const updatedItems = pushWidgetsDown(
-          ghostPosition.x, 
-          ghostPosition.y, 
-          ghostPosition.width, 
-          ghostPosition.height, 
-          resizingItem
-        );
-        
-        const finalItems = updatedItems.map(i => {
-          if (i.id === resizingItem) {
-            return { ...i, width: ghostPosition.width, height: ghostPosition.height };
-          }
-          return i;
-        });
-        
-        onItemsChange(finalItems);
-      }
+      const updatedItems = items.map(item => {
+        if (item.id === resizingItem) {
+          return { ...item, width: ghostPosition.width, height: ghostPosition.height };
+        }
+        return item;
+      });
+      
+      const resolvedItems = resolveAllCollisions(updatedItems);
+      onItemsChange(resolvedItems);
     }
 
     setDraggedItem(null);
