@@ -14,7 +14,7 @@ export interface PortfolioHolding {
   value: number;
   inav?: number;
   notes: string;
-  type: 'ETF' | 'Stock' | 'Crypto' | 'Bond' | 'REIT' | 'Gold';
+  type: 'ETF' | 'Stock' | 'Crypto' | 'Bond' | 'REIT' | 'Gold' | 'Cash' | 'Alternative';
 }
 
 export interface ColumnConfig {
