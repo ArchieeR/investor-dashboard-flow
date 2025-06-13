@@ -31,7 +31,7 @@ export const NewsFilters = ({
       return isSelected 
         ? 'bg-green-500 text-white hover:bg-green-600' 
         : 'border-green-500 text-green-500 hover:bg-green-50';
-    } else if (importance === 'MEDIUM') {
+    } else if (importance === 'MED') {
       return isSelected 
         ? 'bg-yellow-500 text-white hover:bg-yellow-600' 
         : 'border-yellow-500 text-yellow-500 hover:bg-yellow-50';
@@ -59,8 +59,8 @@ export const NewsFilters = ({
           <Button
             variant="outline"
             size="sm"
-            onClick={() => toggleImportance('MEDIUM')}
-            className={getImportanceButtonStyle('MEDIUM')}
+            onClick={() => toggleImportance('MED')}
+            className={getImportanceButtonStyle('MED')}
           >
             Medium
           </Button>
@@ -83,10 +83,18 @@ export const NewsFilters = ({
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="All assets">All assets</SelectItem>
-            <SelectItem value="VUSA">VUSA</SelectItem>
+            <SelectItem value="QQQ">QQQ</SelectItem>
             <SelectItem value="EQQQ">EQQQ</SelectItem>
-            <SelectItem value="VWCE">VWCE</SelectItem>
-            <SelectItem value="IIND">IIND</SelectItem>
+            <SelectItem value="SPY">SPY</SelectItem>
+            <SelectItem value="TSLA">TSLA</SelectItem>
+            <SelectItem value="XOP">XOP</SelectItem>
+            <SelectItem value="MSFT">MSFT</SelectItem>
+            <SelectItem value="TLT">TLT</SelectItem>
+            <SelectItem value="XLF">XLF</SelectItem>
+            <SelectItem value="GLD">GLD</SelectItem>
+            <SelectItem value="BTC">BTC</SelectItem>
+            <SelectItem value="ICLN">ICLN</SelectItem>
+            <SelectItem value="XLV">XLV</SelectItem>
           </SelectContent>
         </Select>
       </div>
