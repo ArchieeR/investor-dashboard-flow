@@ -24,13 +24,25 @@ export const NotificationWidget = () => {
       priority: 'LOW',
       message: 'XLE up 0.4% on supply stabilisation',
       color: 'bg-red-100 text-red-800 border-red-200'
+    },
+    {
+      priority: 'HIGH',
+      message: 'ECB holds rates at 4.25% as expected',
+      color: 'bg-green-100 text-green-800 border-green-200'
+    },
+    {
+      priority: 'MED',
+      message: 'FTSE 100 hits new monthly high',
+      color: 'bg-yellow-100 text-yellow-800 border-yellow-200'
     }
   ];
 
   const portfolioAlerts = [
     'Dividend from VUSA paid: £28.91',
     'ETF rebalanced: 3 new holdings added to DFNG',
-    'Cash ISA topped up: +£1,000'
+    'Cash ISA topped up: +£1,000',
+    'AAPL position down 5% - consider reviewing',
+    'Monthly contribution scheduled for tomorrow'
   ];
 
   return (
@@ -72,10 +84,10 @@ export const NotificationWidget = () => {
           <h3 className="font-medium text-sm text-foreground">Market News</h3>
           <div className="space-y-2">
             {marketNews.map((news, index) => (
-              <div key={index} className={`p-3 rounded-lg border ${news.color}`}>
+              <div key={index} className={`p-2.5 rounded-lg border ${news.color}`}>
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex-1">
-                    <div className="text-sm font-medium leading-relaxed">
+                    <div className="text-xs font-medium leading-relaxed">
                       {news.message}
                     </div>
                   </div>
@@ -96,9 +108,9 @@ export const NotificationWidget = () => {
           <h3 className="font-medium text-sm text-foreground">Portfolio Alerts</h3>
           <div className="space-y-2">
             {portfolioAlerts.map((alert, index) => (
-              <div key={index} className="flex items-start gap-2 p-3 bg-orange-50 rounded-lg border border-orange-200">
-                <AlertTriangle className="h-4 w-4 text-orange-600 mt-0.5 flex-shrink-0" />
-                <div className="text-sm text-orange-900 leading-relaxed">
+              <div key={index} className="flex items-start gap-2 p-2.5 bg-orange-50 rounded-lg border border-orange-200">
+                <AlertTriangle className="h-3.5 w-3.5 text-orange-600 mt-0.5 flex-shrink-0" />
+                <div className="text-xs text-orange-900 leading-relaxed">
                   {alert}
                 </div>
               </div>
