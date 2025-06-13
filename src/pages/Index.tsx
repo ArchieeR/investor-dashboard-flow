@@ -17,9 +17,9 @@ import { CountryExposure } from '@/components/widgets/CountryExposure';
 const Index = () => {
   const [activeTab, setActiveTab] = useState('Portfolio');
 
-  // Complete widget grid with all widgets properly integrated - all default to 2x2
+  // 10-column grid with all widgets as 2x2 - creates 2 rows of 5 widgets
   const [gridItems, setGridItems] = useState<GridItem[]>([
-    // Row 1 - 4 visualization widgets, 2x2 each
+    // Top Row - 5 widgets across 10 columns (2x2 each)
     {
       id: 'sector-allocation',
       x: 0,
@@ -60,21 +60,21 @@ const Index = () => {
       minWidth: 2,
       minHeight: 2
     },
-    
-    // Row 2 - 4 utility widgets, 2x2 each  
     {
       id: 'notes',
-      x: 0,
-      y: 2,
+      x: 8,
+      y: 0,
       width: 2,
       height: 2,
       component: NotesWidget,
       minWidth: 2,
       minHeight: 2
     },
+    
+    // Bottom Row - 5 widgets across 10 columns (2x2 each)
     {
       id: 'dividends',
-      x: 2,
+      x: 0,
       y: 2,
       width: 2,
       height: 2,
@@ -84,7 +84,7 @@ const Index = () => {
     },
     {
       id: 'currency',
-      x: 4,
+      x: 2,
       y: 2,
       width: 2,
       height: 2,
@@ -94,7 +94,7 @@ const Index = () => {
     },
     {
       id: 'watchlist',
-      x: 6,
+      x: 4,
       y: 2,
       width: 2,
       height: 2,
@@ -102,12 +102,10 @@ const Index = () => {
       minWidth: 2,
       minHeight: 2
     },
-
-    // Row 3 - Additional widgets, 2x2 each
     {
       id: 'earnings-calendar',
-      x: 0,
-      y: 4,
+      x: 6,
+      y: 2,
       width: 2,
       height: 2,
       component: EarningsCalendar,
@@ -116,8 +114,8 @@ const Index = () => {
     },
     {
       id: 'country-exposure',
-      x: 2,
-      y: 4,
+      x: 8,
+      y: 2,
       width: 2,
       height: 2,
       component: CountryExposure,
@@ -140,17 +138,17 @@ const Index = () => {
           <FixedTopSection />
         </div>
         
-        {/* Widget Grid Section - Full page width */}
+        {/* Widget Grid Section - Full page width with 10 columns */}
         <div className="mt-8">
           <h3 className="text-lg font-semibold mb-6 text-muted-foreground">
             Portfolio Widgets
           </h3>
-          {/* Full width grid with no container restrictions */}
+          {/* 10-column grid with full width */}
           <div className="w-full">
             <GridSystem 
               items={gridItems} 
               onItemsChange={setGridItems}
-              columns={8}
+              columns={10}
               cellSize={120}
               allowOverlap={false}
             />

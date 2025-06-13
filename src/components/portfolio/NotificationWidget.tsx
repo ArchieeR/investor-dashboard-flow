@@ -31,10 +31,10 @@ const mockNews = [
 
 export const NotificationWidget = () => {
   return (
-    <Card className="h-fit">
-      <CardContent className="p-4 space-y-4">
+    <Card className="h-full flex flex-col">
+      <CardContent className="p-4 space-y-4 flex-1 flex flex-col">
         {/* Day/Total Gain Display */}
-        <div className="grid grid-cols-2 gap-4 p-3 bg-green-50 rounded-lg">
+        <div className="grid grid-cols-2 gap-4 p-3 bg-green-50 rounded-lg flex-shrink-0">
           <div>
             <div className="text-xs text-muted-foreground uppercase tracking-wide">DAY GAIN</div>
             <div className="text-sm font-semibold text-green-600">£10.29 (0.01%)</div>
@@ -45,15 +45,15 @@ export const NotificationWidget = () => {
           </div>
         </div>
 
-        {/* News Widget */}
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
+        {/* News Widget - Flexible height */}
+        <div className="space-y-3 flex-1 flex flex-col">
+          <div className="flex items-center justify-between flex-shrink-0">
             <h3 className="text-sm font-semibold">Market News</h3>
             <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
               <ExternalLink className="h-3 w-3" />
             </Button>
           </div>
-          <div className="space-y-2">
+          <div className="space-y-2 flex-1 overflow-auto">
             {mockNews.map((article) => (
               <div key={article.id} className="p-2 rounded-lg border bg-card hover:bg-accent/50 transition-colors cursor-pointer">
                 <div className="flex items-start justify-between gap-2">
@@ -77,7 +77,7 @@ export const NotificationWidget = () => {
         </div>
 
         {/* Action Buttons - Icon Only */}
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-3 gap-2 flex-shrink-0">
           <Button variant="outline" size="sm" className="flex items-center justify-center p-3 h-10 w-full">
             <Settings className="h-4 w-4" />
           </Button>
