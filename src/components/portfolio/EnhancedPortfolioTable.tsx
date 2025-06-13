@@ -1,4 +1,3 @@
-
 import { useState, useMemo } from 'react';
 import { ChevronDown, ChevronRight } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -187,7 +186,7 @@ export const EnhancedPortfolioTable = () => {
           <th
             key={column.key}
             className="pb-3 text-sm font-medium text-muted-foreground cursor-pointer hover:text-foreground text-left px-2"
-            style={{ width: column.width }}
+            style={{ width: column.width, minWidth: column.width }}
             onClick={() => handleSort(column.key)}
           >
             <div className="flex items-center gap-1">
@@ -202,10 +201,14 @@ export const EnhancedPortfolioTable = () => {
     </thead>
   );
 
-  const renderHoldingRow = (holding: PortfolioHolding, showGroupColumn = false) => (
+  const renderHoldingRow = (holding: PortfolioHolding) => (
     <tr key={holding.id} className="border-b hover:bg-accent transition-colors">
       {visibleColumns.map((column) => (
-        <td key={column.key} className="py-2 px-2">
+        <td 
+          key={column.key} 
+          className="py-2 px-2" 
+          style={{ width: column.width, minWidth: column.width }}
+        >
           {column.key === 'type' ? (
             <Badge variant="secondary" className={getTypeColor(holding.type)}>
               {holding.type}
@@ -231,7 +234,7 @@ export const EnhancedPortfolioTable = () => {
     if (viewMode === 'general') {
       return (
         <div className="overflow-x-auto">
-          <table className="w-full table-fixed">
+          <table className="w-full" style={{ tableLayout: 'fixed' }}>
             {renderTableHeader()}
             <tbody>
               {sortedHoldings.map(holding => renderHoldingRow(holding))}
@@ -243,12 +246,6 @@ export const EnhancedPortfolioTable = () => {
 
     return (
       <div className="space-y-4">
-        <div className="overflow-x-auto">
-          <table className="w-full table-fixed">
-            {renderTableHeader()}
-          </table>
-        </div>
-        
         {Object.entries(groupedHoldings).map(([groupKey, groupHoldings]) => {
           const isExpanded = expandedGroups.has(groupKey);
           const groupTotal = groupHoldings.reduce((sum, holding) => sum + holding.value, 0);
@@ -272,9 +269,10 @@ export const EnhancedPortfolioTable = () => {
               
               {isExpanded && (
                 <div className="overflow-x-auto">
-                  <table className="w-full table-fixed">
+                  <table className="w-full" style={{ tableLayout: 'fixed' }}>
+                    {renderTableHeader()}
                     <tbody>
-                      {groupHoldings.map(holding => renderHoldingRow(holding, true))}
+                      {groupHoldings.map(holding => renderHoldingRow(holding))}
                     </tbody>
                   </table>
                 </div>

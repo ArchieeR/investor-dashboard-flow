@@ -110,7 +110,7 @@ const Index = () => {
       <TopNavigation activeTab={activeTab} onTabChange={setActiveTab} />
       
       <div className="container mx-auto px-4 py-6">
-        {/* Fixed Top Section - Portfolio Chart, Analytics, News, and Holdings Table */}
+        {/* Fixed Top Section - Portfolio Chart, News, and Holdings Table */}
         <FixedTopSection />
         
         {/* Widget Grid Section - All movable/resizable widgets */}
