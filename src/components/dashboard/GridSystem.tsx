@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { GripVertical } from 'lucide-react';
@@ -21,13 +22,70 @@ interface GridSystemProps {
   columns?: number;
 }
 
+// Valid widget sizes (width x height)
+const VALID_SIZES = [
+  { w: 1, h: 1 }, { w: 2, h: 1 }, { w: 3, h: 1 }, { w: 4, h: 1 },
+  { w: 2, h: 2 }, { w: 3, h: 2 }, { w: 4, h: 2 }, { w: 4, h: 3 }
+];
+
 export const GridSystem = ({ items, onItemsChange, columns = 8 }: GridSystemProps) => {
   const [draggedItem, setDraggedItem] = useState<string | null>(null);
   const [resizingItem, setResizingItem] = useState<string | null>(null);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const [ghostPosition, setGhostPosition] = useState<{ x: number; y: number } | null>(null);
   const gridRef = useRef<HTMLDivElement>(null);
 
   const cellSize = 120; // Base cell size for square grid
+
+  // Check if a position would cause collision with other items
+  const hasCollision = (x: number, y: number, width: number, height: number, excludeId?: string) => {
+    return items.some(item => {
+      if (item.id === excludeId) return false;
+      
+      return !(
+        x >= item.x + item.width ||
+        x + width <= item.x ||
+        y >= item.y + item.height ||
+        y + height <= item.y
+      );
+    });
+  };
+
+  // Find the next available position for a widget
+  const findNextAvailablePosition = (width: number, height: number, excludeId?: string) => {
+    const maxRows = Math.max(...items.map(item => item.y + item.height), 10);
+    
+    for (let y = 0; y <= maxRows; y++) {
+      for (let x = 0; x <= columns - width; x++) {
+        if (!hasCollision(x, y, width, height, excludeId)) {
+          return { x, y };
+        }
+      }
+    }
+    
+    // If no position found, place at bottom
+    return { x: 0, y: maxRows + 1 };
+  };
+
+  // Get the closest valid size for resizing
+  const getClosestValidSize = (targetWidth: number, targetHeight: number, minWidth: number, minHeight: number) => {
+    const validOptions = VALID_SIZES.filter(size => 
+      size.w >= minWidth && size.h >= minHeight && size.w <= columns
+    );
+    
+    let closest = validOptions[0];
+    let minDistance = Math.abs(targetWidth - closest.w) + Math.abs(targetHeight - closest.h);
+    
+    for (const size of validOptions) {
+      const distance = Math.abs(targetWidth - size.w) + Math.abs(targetHeight - size.h);
+      if (distance < minDistance) {
+        closest = size;
+        minDistance = distance;
+      }
+    }
+    
+    return closest;
+  };
 
   const handleMouseDown = useCallback((e: React.MouseEvent, itemId: string, type: 'drag' | 'resize') => {
     e.preventDefault();
@@ -50,36 +108,51 @@ export const GridSystem = ({ items, onItemsChange, columns = 8 }: GridSystemProp
     if (!gridRef.current) return;
 
     const gridRect = gridRef.current.getBoundingClientRect();
-    const gridX = Math.floor((e.clientX - gridRect.left - dragOffset.x) / cellSize);
-    const gridY = Math.floor((e.clientY - gridRect.top - dragOffset.y) / cellSize);
+    const gridX = Math.max(0, Math.floor((e.clientX - gridRect.left - dragOffset.x) / cellSize));
+    const gridY = Math.max(0, Math.floor((e.clientY - gridRect.top - dragOffset.y) / cellSize));
 
     if (draggedItem) {
-      const updatedItems = items.map(item => {
-        if (item.id === draggedItem) {
-          return {
-            ...item,
-            x: Math.max(0, Math.min(gridX, columns - item.width)),
-            y: Math.max(0, gridY)
-          };
-        }
-        return item;
-      });
-      onItemsChange(updatedItems);
+      const item = items.find(i => i.id === draggedItem);
+      if (!item) return;
+
+      const constrainedX = Math.max(0, Math.min(gridX, columns - item.width));
+      const constrainedY = Math.max(0, gridY);
+
+      // Show ghost position
+      setGhostPosition({ x: constrainedX, y: constrainedY });
+
+      // Check for collision and find alternative position if needed
+      if (!hasCollision(constrainedX, constrainedY, item.width, item.height, draggedItem)) {
+        // No collision, update position
+        const updatedItems = items.map(i => {
+          if (i.id === draggedItem) {
+            return { ...i, x: constrainedX, y: constrainedY };
+          }
+          return i;
+        });
+        onItemsChange(updatedItems);
+      }
     }
 
     if (resizingItem) {
       const item = items.find(i => i.id === resizingItem);
-      if (item) {
-        const newWidth = Math.max(item.minWidth || 1, Math.floor((e.clientX - gridRect.left - item.x * cellSize) / cellSize));
-        const newHeight = Math.max(item.minHeight || 1, Math.floor((e.clientY - gridRect.top - item.y * cellSize) / cellSize));
-        
+      if (!item) return;
+
+      const newWidth = Math.max(1, Math.floor((e.clientX - gridRect.left - item.x * cellSize) / cellSize));
+      const newHeight = Math.max(1, Math.floor((e.clientY - gridRect.top - item.y * cellSize) / cellSize));
+      
+      const closestSize = getClosestValidSize(
+        newWidth, 
+        newHeight, 
+        item.minWidth || 1, 
+        item.minHeight || 1
+      );
+
+      // Check if resize would cause collision
+      if (!hasCollision(item.x, item.y, closestSize.w, closestSize.h, resizingItem)) {
         const updatedItems = items.map(i => {
           if (i.id === resizingItem) {
-            return {
-              ...i,
-              width: Math.min(newWidth, columns - i.x),
-              height: newHeight
-            };
+            return { ...i, width: closestSize.w, height: closestSize.h };
           }
           return i;
         });
@@ -89,10 +162,28 @@ export const GridSystem = ({ items, onItemsChange, columns = 8 }: GridSystemProp
   }, [draggedItem, resizingItem, items, onItemsChange, dragOffset, cellSize, columns]);
 
   const handleMouseUp = useCallback(() => {
+    if (draggedItem) {
+      const item = items.find(i => i.id === draggedItem);
+      if (item && ghostPosition) {
+        // Final position check and auto-placement if collision
+        if (hasCollision(ghostPosition.x, ghostPosition.y, item.width, item.height, draggedItem)) {
+          const newPosition = findNextAvailablePosition(item.width, item.height, draggedItem);
+          const updatedItems = items.map(i => {
+            if (i.id === draggedItem) {
+              return { ...i, x: newPosition.x, y: newPosition.y };
+            }
+            return i;
+          });
+          onItemsChange(updatedItems);
+        }
+      }
+    }
+
     setDraggedItem(null);
     setResizingItem(null);
     setDragOffset({ x: 0, y: 0 });
-  }, []);
+    setGhostPosition(null);
+  }, [draggedItem, ghostPosition, items, onItemsChange]);
 
   // Add event listeners
   useEffect(() => {
@@ -107,7 +198,7 @@ export const GridSystem = ({ items, onItemsChange, columns = 8 }: GridSystemProp
   }, [draggedItem, resizingItem, handleMouseMove, handleMouseUp]);
 
   const getMaxRows = () => {
-    return Math.max(...items.map(item => item.y + item.height), 4);
+    return Math.max(...items.map(item => item.y + item.height), 6);
   };
 
   return (
@@ -123,14 +214,29 @@ export const GridSystem = ({ items, onItemsChange, columns = 8 }: GridSystemProp
         backgroundSize: `${cellSize}px ${cellSize}px`
       }}
     >
+      {/* Ghost position indicator */}
+      {ghostPosition && draggedItem && (
+        <div
+          className="absolute border-2 border-dashed border-primary bg-primary/10 rounded-lg z-40 pointer-events-none"
+          style={{
+            left: `${ghostPosition.x * cellSize}px`,
+            top: `${ghostPosition.y * cellSize}px`,
+            width: `${items.find(i => i.id === draggedItem)?.width! * cellSize}px`,
+            height: `${items.find(i => i.id === draggedItem)?.height! * cellSize}px`,
+          }}
+        />
+      )}
+
       {items.map((item) => {
         const Component = item.component;
+        const isDragging = draggedItem === item.id;
+        
         return (
           <Card
             key={item.id}
-            className={`absolute overflow-hidden transition-all duration-200 ${
+            className={`absolute transition-all duration-200 ${
               item.fixed ? '' : 'hover:shadow-lg cursor-move'
-            } ${draggedItem === item.id ? 'z-50 shadow-2xl' : 'z-10'}`}
+            } ${isDragging ? 'z-50 shadow-2xl opacity-75' : 'z-10'}`}
             style={{
               left: `${item.x * cellSize}px`,
               top: `${item.y * cellSize}px`,
@@ -145,7 +251,7 @@ export const GridSystem = ({ items, onItemsChange, columns = 8 }: GridSystemProp
               </div>
             )}
             
-            <div className="h-full w-full overflow-auto">
+            <div className="h-full w-full overflow-hidden">
               <Component {...(item.props || {})} />
             </div>
 

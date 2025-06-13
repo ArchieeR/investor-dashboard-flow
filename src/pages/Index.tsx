@@ -19,138 +19,137 @@ const Index = () => {
   const [activeTab, setActiveTab] = useState('Portfolio');
 
   const [gridItems, setGridItems] = useState<GridItem[]>([
-    // Fixed Holdings Table - spans full width
+    // Holdings Table - large widget, minimum 4x3
     {
       id: 'holdings-table',
       x: 0,
       y: 0,
-      width: 8,
-      height: 4,
-      component: EnhancedPortfolioTable,
-      fixed: true,
-      minWidth: 8,
-      minHeight: 4
-    },
-    // Portfolio Chart - large widget
-    {
-      id: 'portfolio-chart',
-      x: 0,
-      y: 4,
       width: 4,
       height: 3,
+      component: EnhancedPortfolioTable,
+      minWidth: 4,
+      minHeight: 3
+    },
+    // Portfolio Chart - large widget, minimum 4x2
+    {
+      id: 'portfolio-chart',
+      x: 4,
+      y: 0,
+      width: 4,
+      height: 2,
       component: PortfolioChart,
       minWidth: 4,
       minHeight: 2
     },
-    // Analytics Widgets - spans full width
+    // Analytics Widgets - spans 4x2
     {
       id: 'analytics',
-      x: 0,
-      y: 7,
-      width: 8,
-      height: 2,
-      component: AnalyticsWidgets,
-      minWidth: 8,
-      minHeight: 2
-    },
-    // Notification Widget
-    {
-      id: 'notifications',
       x: 4,
-      y: 4,
-      width: 2,
-      height: 3,
-      component: NotificationWidget,
-      minWidth: 1,
-      minHeight: 2
+      y: 2,
+      width: 4,
+      height: 1,
+      component: AnalyticsWidgets,
+      minWidth: 4,
+      minHeight: 1
     },
-    // Allocation Pie Chart
+    // Allocation Pie Chart - 2x2
     {
       id: 'allocation-pie',
-      x: 6,
-      y: 4,
+      x: 0,
+      y: 3,
       width: 2,
       height: 2,
       component: AllocationPieChart,
       minWidth: 2,
       minHeight: 2
     },
-    // Country Exposure
+    // Country Exposure - 2x2
     {
       id: 'country-exposure',
-      x: 6,
-      y: 6,
+      x: 2,
+      y: 3,
       width: 2,
-      height: 3,
+      height: 2,
       component: CountryExposure,
+      minWidth: 1,
+      minHeight: 1
+    },
+    // Notification Widget - 2x2
+    {
+      id: 'notifications',
+      x: 4,
+      y: 3,
+      width: 2,
+      height: 2,
+      component: NotificationWidget,
       minWidth: 2,
       minHeight: 2
     },
-    // News Feed
+    // News Feed - 2x2
     {
       id: 'news-feed',
-      x: 0,
-      y: 9,
+      x: 6,
+      y: 3,
       width: 2,
-      height: 3,
+      height: 2,
       component: NewsFeedWidget,
       minWidth: 2,
-      minHeight: 3
+      minHeight: 2
     },
-    // Earnings Calendar
+    // Earnings Calendar - 2x2
     {
       id: 'earnings',
-      x: 2,
-      y: 9,
+      x: 0,
+      y: 5,
       width: 2,
-      height: 3,
+      height: 2,
       component: EarningsCalendar,
       minWidth: 2,
-      minHeight: 3
+      minHeight: 2
     },
-    // Notes Widget
+    // Notes Widget - 1x1
     {
       id: 'notes',
-      x: 4,
-      y: 9,
+      x: 2,
+      y: 5,
       width: 1,
-      height: 2,
+      height: 1,
       component: NotesWidget,
       minWidth: 1,
-      minHeight: 2
+      minHeight: 1
     },
-    // Dividend Tracker
+    // Dividend Tracker - 1x1
     {
       id: 'dividends',
-      x: 5,
-      y: 9,
+      x: 3,
+      y: 5,
       width: 1,
-      height: 2,
+      height: 1,
       component: DividendTracker,
       minWidth: 1,
-      minHeight: 2
+      minHeight: 1
     },
-    // Currency Widget
+    // Currency Widget - 1x1
     {
       id: 'currency',
-      x: 6,
-      y: 9,
+      x: 4,
+      y: 5,
       width: 1,
-      height: 2,
+      height: 1,
       component: CurrencyWidget,
       minWidth: 1,
-      minHeight: 2
+      minHeight: 1
     },
-    // Watchlist Widget
+    // Watchlist Widget - 1x1
     {
       id: 'watchlist',
-      x: 7,
-      y: 9,
+      x: 5,
+      y: 5,
       width: 1,
-      height: 2,
+      height: 1,
       component: WatchlistWidget,
       minWidth: 1,
-      minHeight: 2
+      minHeight: 1
     }
   ]);
 

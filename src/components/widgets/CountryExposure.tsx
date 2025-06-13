@@ -12,22 +12,22 @@ export const CountryExposure = () => {
   ];
 
   return (
-    <Card className="h-full">
+    <Card className="h-full flex flex-col">
       <CardHeader className="pb-2">
         <CardTitle className="text-sm flex items-center gap-1">
           <Globe className="h-3 w-3" />
           Country Exposure
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-2">
+      <CardContent className="flex-1 space-y-2 overflow-hidden">
         {countries.map((country, index) => (
           <div key={index} className="space-y-1">
             <div className="flex items-center justify-between text-xs">
-              <div className="flex items-center gap-1">
-                <span className="text-sm">{country.flag}</span>
+              <div className="flex items-center gap-1 min-w-0 flex-1">
+                <span className="text-sm flex-shrink-0">{country.flag}</span>
                 <span className="font-medium truncate">{country.name}</span>
               </div>
-              <span className="font-semibold">{country.percentage}%</span>
+              <span className="font-semibold flex-shrink-0">{country.percentage}%</span>
             </div>
             <div className="w-full bg-muted rounded-full h-1">
               <div

@@ -11,26 +11,26 @@ export const EarningsCalendar = () => {
   ];
 
   return (
-    <Card className="h-full">
+    <Card className="h-full flex flex-col">
       <CardHeader className="pb-2">
         <CardTitle className="text-sm flex items-center gap-1">
           <Calendar className="h-3 w-3" />
           Earnings Calendar
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-3">
+      <CardContent className="flex-1 space-y-3 overflow-hidden">
         {earnings.map((item, index) => (
           <div key={index} className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Badge variant="outline" className="text-xs font-mono">
+            <div className="flex items-center gap-2 min-w-0 flex-1">
+              <Badge variant="outline" className="text-xs font-mono flex-shrink-0">
                 {item.ticker}
               </Badge>
-              <div>
-                <div className="text-xs font-medium">{item.company}</div>
+              <div className="min-w-0 flex-1">
+                <div className="text-xs font-medium truncate">{item.company}</div>
                 <div className="text-xs text-muted-foreground">{item.time}</div>
               </div>
             </div>
-            <div className="text-xs font-medium">{item.date}</div>
+            <div className="text-xs font-medium flex-shrink-0">{item.date}</div>
           </div>
         ))}
       </CardContent>

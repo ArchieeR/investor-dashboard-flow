@@ -16,36 +16,38 @@ const chartConfig = {
 
 export const AllocationPieChart = () => {
   return (
-    <Card className="h-full">
+    <Card className="h-full flex flex-col">
       <CardHeader className="pb-2">
         <CardTitle className="text-sm">Asset Allocation</CardTitle>
       </CardHeader>
-      <CardContent className="h-full">
-        <ChartContainer config={chartConfig} className="h-32">
-          <PieChart>
-            <Pie
-              data={data}
-              cx="50%"
-              cy="50%"
-              innerRadius={20}
-              outerRadius={50}
-              paddingAngle={2}
-              dataKey="value"
-            >
-              {data.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={entry.color} />
-              ))}
-            </Pie>
-          </PieChart>
-        </ChartContainer>
-        <div className="space-y-1 mt-2">
+      <CardContent className="flex-1 flex flex-col overflow-hidden">
+        <div className="flex-1">
+          <ChartContainer config={chartConfig} className="h-32">
+            <PieChart>
+              <Pie
+                data={data}
+                cx="50%"
+                cy="50%"
+                innerRadius={20}
+                outerRadius={50}
+                paddingAngle={2}
+                dataKey="value"
+              >
+                {data.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={entry.color} />
+                ))}
+              </Pie>
+            </PieChart>
+          </ChartContainer>
+        </div>
+        <div className="space-y-1">
           {data.map((item, index) => (
             <div key={index} className="flex items-center justify-between text-xs">
-              <div className="flex items-center gap-1">
-                <div className="w-2 h-2 rounded-sm" style={{ backgroundColor: item.color }} />
-                <span>{item.name}</span>
+              <div className="flex items-center gap-1 min-w-0 flex-1">
+                <div className="w-2 h-2 rounded-sm flex-shrink-0" style={{ backgroundColor: item.color }} />
+                <span className="truncate">{item.name}</span>
               </div>
-              <span>{item.value}%</span>
+              <span className="flex-shrink-0">{item.value}%</span>
             </div>
           ))}
         </div>

@@ -26,18 +26,18 @@ export const NewsFeedWidget = () => {
   ];
 
   return (
-    <Card className="h-full">
+    <Card className="h-full flex flex-col">
       <CardHeader className="pb-2">
         <CardTitle className="text-sm flex items-center gap-1">
           <Newspaper className="h-3 w-3" />
           Portfolio News
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-3">
+      <CardContent className="flex-1 space-y-3 overflow-hidden">
         {news.map((item, index) => (
           <div key={index} className="space-y-1">
             <div className="flex items-start justify-between gap-2">
-              <p className="text-xs font-medium leading-tight">{item.headline}</p>
+              <p className="text-xs font-medium leading-tight flex-1">{item.headline}</p>
               <div className="flex items-center gap-1 flex-shrink-0">
                 {item.sentiment === 'positive' ? (
                   <TrendingUp className="h-3 w-3 text-green-600" />
