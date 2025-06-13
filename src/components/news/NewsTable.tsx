@@ -1,4 +1,3 @@
-
 import { Badge } from '@/components/ui/badge';
 
 interface NewsItem {
@@ -161,10 +160,10 @@ export const NewsTable = () => {
 
   const getImportanceBadgeColor = (importance: string) => {
     switch (importance) {
-      case 'HIGH': return 'bg-green-100 text-green-800 border-green-300';
-      case 'MED': return 'bg-yellow-100 text-yellow-800 border-yellow-300';
-      case 'LOW': return 'bg-red-100 text-red-800 border-red-300';
-      default: return 'bg-gray-100 text-gray-800 border-gray-300';
+      case 'HIGH': return 'bg-green-500 text-white border-green-500';
+      case 'MED': return 'bg-yellow-500 text-white border-yellow-500';
+      case 'LOW': return 'bg-red-500 text-white border-red-500';
+      default: return 'bg-gray-500 text-white border-gray-500';
     }
   };
 
@@ -178,8 +177,8 @@ export const NewsTable = () => {
         <div className="col-span-2 text-right">Impact</div>
       </div>
       
-      {/* News Items */}
-      <div className="space-y-1 max-h-96 overflow-y-auto">
+      {/* News Items - Remove max-height and overflow to allow full page scroll */}
+      <div className="space-y-1">
         {newsData.map((item) => (
           <div
             key={item.id}
@@ -198,7 +197,6 @@ export const NewsTable = () => {
             
             <div className="col-span-2 flex justify-center items-center">
               <Badge 
-                variant="outline" 
                 className={`${getImportanceBadgeColor(item.importance)} text-xs px-2 py-1`}
               >
                 {item.importance}

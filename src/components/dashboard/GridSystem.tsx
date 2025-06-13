@@ -24,14 +24,6 @@ interface GridSystemProps {
   allowOverlap?: boolean;
 }
 
-// Valid widget sizes (width x height) - predefined snap sizes
-const VALID_SIZES = [
-  { w: 1, h: 1 }, { w: 2, h: 1 }, { w: 3, h: 1 }, { w: 4, h: 1 },
-  { w: 1, h: 2 }, { w: 2, h: 2 }, { w: 3, h: 2 }, { w: 4, h: 2 },
-  { w: 1, h: 3 }, { w: 2, h: 3 }, { w: 3, h: 3 }, { w: 4, h: 3 },
-  { w: 4, h: 4 }, { w: 6, h: 2 }, { w: 8, h: 2 }
-];
-
 export const GridSystem = ({ 
   items, 
   onItemsChange, 
@@ -90,26 +82,6 @@ export const GridSystem = ({
     return updatedItems;
   };
 
-  // Get the closest valid size for resizing
-  const getClosestValidSize = (targetWidth: number, targetHeight: number, minWidth: number, minHeight: number) => {
-    const validOptions = VALID_SIZES.filter(size => 
-      size.w >= minWidth && size.h >= minHeight && size.w <= columns
-    );
-    
-    let closest = validOptions[0];
-    let minDistance = Math.abs(targetWidth - closest.w) + Math.abs(targetHeight - closest.h);
-    
-    for (const size of validOptions) {
-      const distance = Math.abs(targetWidth - size.w) + Math.abs(targetHeight - size.h);
-      if (distance < minDistance) {
-        closest = size;
-        minDistance = distance;
-      }
-    }
-    
-    return closest;
-  };
-
   const handleMouseDown = useCallback((e: React.MouseEvent, itemId: string, type: 'drag' | 'resize') => {
     e.preventDefault();
     const item = items.find(i => i.id === itemId);
@@ -149,18 +121,11 @@ export const GridSystem = ({
       const item = items.find(i => i.id === resizingItem);
       if (!item) return;
 
-      const newWidth = Math.max(1, Math.floor((e.clientX - gridRect.left - item.x * cellSize) / cellSize));
-      const newHeight = Math.max(1, Math.floor((e.clientY - gridRect.top - item.y * cellSize) / cellSize));
-      
-      const closestSize = getClosestValidSize(
-        newWidth, 
-        newHeight, 
-        item.minWidth || 1, 
-        item.minHeight || 1
-      );
+      const newWidth = Math.max(item.minWidth || 2, Math.min(4, Math.floor((e.clientX - gridRect.left - item.x * cellSize) / cellSize)));
+      const newHeight = Math.max(item.minHeight || 2, Math.min(4, Math.floor((e.clientY - gridRect.top - item.y * cellSize) / cellSize)));
 
       // Show ghost resize
-      setGhostPosition({ x: item.x, y: item.y, width: closestSize.w, height: closestSize.h });
+      setGhostPosition({ x: item.x, y: item.y, width: newWidth, height: newHeight });
     }
   }, [draggedItem, resizingItem, items, dragOffset, cellSize, columns]);
 
@@ -228,76 +193,81 @@ export const GridSystem = ({
   }, [draggedItem, resizingItem, handleMouseMove, handleMouseUp]);
 
   const getMaxRows = () => {
-    return Math.max(...items.map(item => item.y + item.height), 6);
+    return Math.max(...items.map(item => item.y + item.height), 3);
   };
 
+  const containerWidth = columns * cellSize;
+
   return (
-    <div 
-      ref={gridRef}
-      className="relative w-full"
-      style={{ 
-        height: `${getMaxRows() * cellSize}px`,
-        backgroundImage: allowOverlap ? 'none' : `
-          linear-gradient(to right, hsl(var(--border)) 1px, transparent 1px),
-          linear-gradient(to bottom, hsl(var(--border)) 1px, transparent 1px)
-        `,
-        backgroundSize: `${cellSize}px ${cellSize}px`
-      }}
-    >
-      {/* Ghost position indicator */}
-      {ghostPosition && (draggedItem || resizingItem) && (
-        <div
-          className="absolute border-2 border-dashed border-primary bg-primary/10 rounded-lg z-40 pointer-events-none"
-          style={{
-            left: `${ghostPosition.x * cellSize}px`,
-            top: `${ghostPosition.y * cellSize}px`,
-            width: `${ghostPosition.width * cellSize}px`,
-            height: `${ghostPosition.height * cellSize}px`,
-          }}
-        />
-      )}
-
-      {items.map((item) => {
-        const Component = item.component;
-        const isDragging = draggedItem === item.id;
-        const isResizing = resizingItem === item.id;
-        
-        return (
-          <Card
-            key={item.id}
-            className={`absolute transition-all duration-200 ${
-              item.fixed ? '' : 'hover:shadow-lg cursor-move'
-            } ${isDragging || isResizing ? 'z-50 shadow-2xl opacity-75' : 'z-10'}`}
+    <div className="w-full flex justify-center">
+      <div 
+        ref={gridRef}
+        className="relative"
+        style={{ 
+          width: `${containerWidth}px`,
+          height: `${getMaxRows() * cellSize}px`,
+          backgroundImage: `
+            linear-gradient(to right, hsl(var(--border)) 1px, transparent 1px),
+            linear-gradient(to bottom, hsl(var(--border)) 1px, transparent 1px)
+          `,
+          backgroundSize: `${cellSize}px ${cellSize}px`
+        }}
+      >
+        {/* Ghost position indicator */}
+        {ghostPosition && (draggedItem || resizingItem) && (
+          <div
+            className="absolute border-2 border-dashed border-primary bg-primary/10 rounded-lg z-40 pointer-events-none"
             style={{
-              left: `${item.x * cellSize}px`,
-              top: `${item.y * cellSize}px`,
-              width: `${item.width * cellSize}px`,
-              height: `${item.height * cellSize}px`,
+              left: `${ghostPosition.x * cellSize}px`,
+              top: `${ghostPosition.y * cellSize}px`,
+              width: `${ghostPosition.width * cellSize}px`,
+              height: `${ghostPosition.height * cellSize}px`,
             }}
-            onMouseDown={(e) => !item.fixed && handleMouseDown(e, item.id, 'drag')}
-          >
-            {!item.fixed && (
-              <div className="absolute top-2 right-2 opacity-50 hover:opacity-100 z-20">
-                <GripVertical className="h-4 w-4 text-muted-foreground" />
-              </div>
-            )}
-            
-            <div className="h-full w-full overflow-hidden">
-              <Component {...(item.props || {})} />
-            </div>
+          />
+        )}
 
-            {!item.fixed && (
-              <div
-                className="absolute bottom-0 right-0 w-4 h-4 cursor-se-resize z-20"
-                style={{
-                  background: 'linear-gradient(-45deg, transparent 30%, hsl(var(--border)) 30%, hsl(var(--border)) 70%, transparent 70%)'
-                }}
-                onMouseDown={(e) => handleMouseDown(e, item.id, 'resize')}
-              />
-            )}
-          </Card>
-        );
-      })}
+        {items.map((item) => {
+          const Component = item.component;
+          const isDragging = draggedItem === item.id;
+          const isResizing = resizingItem === item.id;
+          
+          return (
+            <Card
+              key={item.id}
+              className={`absolute transition-all duration-200 ${
+                item.fixed ? '' : 'hover:shadow-lg cursor-move'
+              } ${isDragging || isResizing ? 'z-50 shadow-2xl opacity-75' : 'z-10'}`}
+              style={{
+                left: `${item.x * cellSize}px`,
+                top: `${item.y * cellSize}px`,
+                width: `${item.width * cellSize}px`,
+                height: `${item.height * cellSize}px`,
+              }}
+              onMouseDown={(e) => !item.fixed && handleMouseDown(e, item.id, 'drag')}
+            >
+              {!item.fixed && (
+                <div className="absolute top-2 right-2 opacity-50 hover:opacity-100 z-20">
+                  <GripVertical className="h-4 w-4 text-muted-foreground" />
+                </div>
+              )}
+              
+              <div className="h-full w-full overflow-hidden p-1">
+                <Component {...(item.props || {})} />
+              </div>
+
+              {!item.fixed && (
+                <div
+                  className="absolute bottom-0 right-0 w-4 h-4 cursor-se-resize z-20"
+                  style={{
+                    background: 'linear-gradient(-45deg, transparent 30%, hsl(var(--border)) 30%, hsl(var(--border)) 70%, transparent 70%)'
+                  }}
+                  onMouseDown={(e) => handleMouseDown(e, item.id, 'resize')}
+                />
+              )}
+            </Card>
+          );
+        })}
+      </div>
     </div>
   );
 };

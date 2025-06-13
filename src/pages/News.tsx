@@ -22,7 +22,11 @@ const News = () => {
           </div>
           
           <NewsFilters />
-          <NewsTable />
+          
+          {/* News table with full page scrolling */}
+          <div className="pb-8">
+            <NewsTable />
+          </div>
         </div>
       </div>
     </div>

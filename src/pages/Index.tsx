@@ -11,11 +11,13 @@ import { NotesWidget } from '@/components/portfolio/NotesWidget';
 import { DividendTracker } from '@/components/portfolio/DividendTracker';
 import { CurrencyWidget } from '@/components/portfolio/CurrencyWidget';
 import { WatchlistWidget } from '@/components/portfolio/WatchlistWidget';
+import { EarningsCalendar } from '@/components/widgets/EarningsCalendar';
+import { CountryExposure } from '@/components/widgets/CountryExposure';
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState('Portfolio');
 
-  // Complete widget grid with all widgets properly integrated
+  // Complete widget grid with all widgets properly integrated - all default to 2x2
   const [gridItems, setGridItems] = useState<GridItem[]>([
     // Row 1 - 4 visualization widgets, 2x2 each
     {
@@ -59,46 +61,68 @@ const Index = () => {
       minHeight: 2
     },
     
-    // Row 2 - 4 utility widgets, 2x1 each  
+    // Row 2 - 4 utility widgets, 2x2 each  
     {
       id: 'notes',
       x: 0,
       y: 2,
       width: 2,
-      height: 1,
+      height: 2,
       component: NotesWidget,
       minWidth: 2,
-      minHeight: 1
+      minHeight: 2
     },
     {
       id: 'dividends',
       x: 2,
       y: 2,
       width: 2,
-      height: 1,
+      height: 2,
       component: DividendTracker,
       minWidth: 2,
-      minHeight: 1
+      minHeight: 2
     },
     {
       id: 'currency',
       x: 4,
       y: 2,
       width: 2,
-      height: 1,
+      height: 2,
       component: CurrencyWidget,
       minWidth: 2,
-      minHeight: 1
+      minHeight: 2
     },
     {
       id: 'watchlist',
       x: 6,
       y: 2,
       width: 2,
-      height: 1,
+      height: 2,
       component: WatchlistWidget,
       minWidth: 2,
-      minHeight: 1
+      minHeight: 2
+    },
+
+    // Row 3 - Additional widgets, 2x2 each
+    {
+      id: 'earnings-calendar',
+      x: 0,
+      y: 4,
+      width: 2,
+      height: 2,
+      component: EarningsCalendar,
+      minWidth: 2,
+      minHeight: 2
+    },
+    {
+      id: 'country-exposure',
+      x: 2,
+      y: 4,
+      width: 2,
+      height: 2,
+      component: CountryExposure,
+      minWidth: 2,
+      minHeight: 2
     }
   ]);
 
