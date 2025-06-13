@@ -1,20 +1,13 @@
 
 import { useState } from 'react';
-import { Menu, Bell, Search, User, ChevronDown, Home, Wrench, Users, Book } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { NotificationDropdown } from '@/components/notifications/NotificationDropdown';
 import { SearchDropdown } from '@/components/search/SearchDropdown';
+import { NotificationDropdown } from '@/components/notifications/NotificationDropdown';
 import { AccountDropdown } from '@/components/account/AccountDropdown';
-import { CalendarButton } from '@/components/portfolio/CalendarButton';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { CalendarButton } from './CalendarButton';
+import { Bell, Search, Settings, TrendingUp, TrendingDown } from 'lucide-react';
 
 interface TopNavigationProps {
   activeTab: string;
@@ -22,119 +15,83 @@ interface TopNavigationProps {
 }
 
 export const TopNavigation = ({ activeTab, onTabChange }: TopNavigationProps) => {
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [notificationOpen, setNotificationOpen] = useState(false);
   const navigate = useNavigate();
-  const location = useLocation();
 
-  const researchItems = [
+  const totalValue = 48193;
+  const dayChange = 1307;
+  const dayChangePercent = 2.79;
+  const isPositive = dayChange >= 0;
+
+  const tabs = [
+    { name: 'Portfolio', path: '/' },
     { name: 'News', path: '/news' },
     { name: 'Events', path: '/events' },
-    { name: 'ETF Screener', path: '/screener' },
+    { name: 'Screener', path: '/screener' },
     { name: 'Broker Comparer', path: '/broker-comparer' },
+    { name: 'Community', path: '/community' },
+    { name: 'Learn', path: '/learn' }
   ];
 
-  const handleTabClick = (tab: string, path: string) => {
-    onTabChange(tab);
-    navigate(path);
-  };
-
-  const getCurrentTab = () => {
-    if (location.pathname === '/') return 'Portfolio';
-    if (location.pathname === '/community') return 'Community';
-    if (location.pathname === '/learn') return 'Learn';
-    const currentResearchItem = researchItems.find(item => item.path === location.pathname);
-    return currentResearchItem ? 'Research' : activeTab;
-  };
-
-  const isResearchActive = () => {
-    return researchItems.some(item => item.path === location.pathname);
+  const handleTabClick = (tab: any) => {
+    onTabChange(tab.name);
+    navigate(tab.path);
   };
 
   return (
-    <div className="bg-background border-b border-border sticky top-0 z-50">
+    <nav className="border-b bg-card/50 backdrop-blur supports-[backdrop-filter]:bg-card/50">
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo and Navigation */}
+        <div className="flex h-16 items-center justify-between">
           <div className="flex items-center space-x-8">
-            <div className="text-xl font-bold text-primary">WT</div>
-            
-            <nav className="hidden md:flex space-x-1">
-              <button
-                onClick={() => handleTabClick('Portfolio', '/')}
-                className={`px-4 py-2 text-sm font-medium rounded-md transition-colors flex items-center space-x-2 ${
-                  getCurrentTab() === 'Portfolio'
-                    ? 'bg-sky-500 text-white'
-                    : 'text-muted-foreground hover:text-foreground hover:bg-sky-50'
-                }`}
-              >
-                <Home className="h-4 w-4" />
-                <span>Portfolio</span>
-              </button>
-              
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <button
-                    className={`px-4 py-2 text-sm font-medium rounded-md transition-colors flex items-center space-x-1 ${
-                      isResearchActive()
-                        ? 'bg-sky-500 text-white'
-                        : 'text-muted-foreground hover:text-foreground hover:bg-sky-50'
-                    }`}
-                  >
-                    <Wrench className="h-4 w-4" />
-                    <span>Research</span>
-                    <ChevronDown className="h-3 w-3" />
-                  </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="start" className="w-48">
-                  {researchItems.map((item) => (
-                    <DropdownMenuItem
-                      key={item.name}
-                      onClick={() => handleTabClick(item.name, item.path)}
-                      className="cursor-pointer"
-                    >
-                      {item.name}
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
-
-              <button
-                onClick={() => handleTabClick('Community', '/community')}
-                className={`px-4 py-2 text-sm font-medium rounded-md transition-colors flex items-center space-x-2 ${
-                  getCurrentTab() === 'Community'
-                    ? 'bg-sky-500 text-white'
-                    : 'text-muted-foreground hover:text-foreground hover:bg-sky-50'
-                }`}
-              >
-                <Users className="h-4 w-4" />
-                <span>Community</span>
-              </button>
-
-              <button
-                onClick={() => handleTabClick('Learn', '/learn')}
-                className={`px-4 py-2 text-sm font-medium rounded-md transition-colors flex items-center space-x-2 ${
-                  getCurrentTab() === 'Learn'
-                    ? 'bg-sky-500 text-white'
-                    : 'text-muted-foreground hover:text-foreground hover:bg-sky-50'
-                }`}
-              >
-                <Book className="h-4 w-4" />
-                <span>Learn</span>
-              </button>
-            </nav>
-          </div>
-
-          {/* Search and Actions */}
-          <div className="flex items-center space-x-4">
-            <div className="relative">
-              <SearchDropdown />
+            <div className="flex items-center space-x-2">
+              <div className="text-xl font-bold text-primary">Portfolio</div>
+              <Badge variant="secondary" className="text-xs">
+                Live
+              </Badge>
             </div>
             
-            <CalendarButton />
-            <NotificationDropdown />
-            <AccountDropdown />
+            <div className="hidden md:flex space-x-1">
+              {tabs.map((tab) => (
+                <Button
+                  key={tab.name}
+                  variant={activeTab === tab.name ? "default" : "ghost"}
+                  className="text-sm"
+                  onClick={() => handleTabClick(tab)}
+                >
+                  {tab.name}
+                </Button>
+              ))}
+            </div>
+          </div>
+
+          <div className="flex items-center space-x-4">
+            <div className="hidden lg:flex items-center space-x-4 text-sm">
+              <div className="font-semibold text-foreground">
+                £{totalValue.toLocaleString()}
+              </div>
+              <div className={`flex items-center space-x-1 font-medium ${
+                isPositive ? 'text-green-600' : 'text-red-600'
+              }`}>
+                {isPositive ? (
+                  <TrendingUp className="h-4 w-4" />
+                ) : (
+                  <TrendingDown className="h-4 w-4" />
+                )}
+                <span>{isPositive ? '+' : ''}£{dayChange}</span>
+                <span>({isPositive ? '+' : ''}{dayChangePercent}%)</span>
+              </div>
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <SearchDropdown />
+              <CalendarButton />
+              <NotificationDropdown />
+              <AccountDropdown />
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </nav>
   );
 };

@@ -16,6 +16,7 @@ const Events = () => {
   const [selectedEarnings, setSelectedEarnings] = useState(true);
   const [selectedEconomic, setSelectedEconomic] = useState(true);
   const [selectedPolitical, setSelectedPolitical] = useState(true);
+  const [selectedDividends, setSelectedDividends] = useState(true);
 
   const weekOptions = ['Yesterday', 'Today', 'Tomorrow', 'This Week', 'Next Week'];
 
@@ -156,6 +157,19 @@ const Events = () => {
     }
   ];
 
+  // Dividend events data
+  const dividendEvents = [
+    { date: 'Mon 9', count: 1, events: [{ time: 'Ex-Date', ticker: 'VUSA', company: 'Vanguard S&P 500', type: 'dividend', amount: '£0.52' }] },
+    { date: 'Tue 10', count: 0, events: [] },
+    { date: 'Wed 11', count: 2, events: [
+      { time: 'Ex-Date', ticker: 'VTI', company: 'Vanguard Total Stock', type: 'dividend', amount: '£0.29' },
+      { time: 'Pay Date', ticker: 'EQQQ', company: 'Invesco NASDAQ-100', type: 'dividend', amount: '£0.16' }
+    ]},
+    { date: 'Thu 12', count: 0, events: [] },
+    { date: 'Fri 13', count: 1, events: [{ time: 'Pay Date', ticker: 'CS1', company: 'Amundi IBEX 35', type: 'dividend', amount: '£0.18' }] },
+    { date: 'Sat 14', count: 0, events: [] }
+  ];
+
   // Economic events data with calendar structure
   const economicEvents = [
     { date: 'Mon 9', count: 1, events: [{ time: '2:00 PM', title: 'Federal Reserve Interest Rate Decision', type: 'Economic', impact: 'High' }] },
@@ -291,6 +305,7 @@ const Events = () => {
     if (selectedEarnings) events.push(...earningsData);
     if (selectedEconomic) events.push(...economicEvents);
     if (selectedPolitical) events.push(...politicalEvents);
+    if (selectedDividends) events.push(...dividendEvents);
     
     const mergedEvents = events.reduce((acc, dayData) => {
       const existingDay = acc.find(d => d.date === dayData.date);
@@ -335,6 +350,11 @@ const Events = () => {
                   <div className="font-medium text-xs leading-tight">
                     {event.company || event.title}
                   </div>
+                  {event.amount && (
+                    <div className="text-xs text-green-600 font-medium mt-1">
+                      {event.amount}
+                    </div>
+                  )}
                   {event.impact && (
                     <Badge variant={getImpactColor(event.impact)} className="text-xs mt-1">
                       {event.impact}
@@ -420,6 +440,14 @@ const Events = () => {
                     onCheckedChange={(checked) => setSelectedEarnings(checked === true)} 
                   />
                   <label htmlFor="earnings" className="text-sm font-medium">Earnings</label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Checkbox 
+                    id="dividends" 
+                    checked={selectedDividends} 
+                    onCheckedChange={(checked) => setSelectedDividends(checked === true)} 
+                  />
+                  <label htmlFor="dividends" className="text-sm font-medium">Dividends</label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Checkbox 

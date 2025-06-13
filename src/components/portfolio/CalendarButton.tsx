@@ -1,5 +1,6 @@
 
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Calendar, X } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -7,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 
 export const CalendarButton = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
 
   const calendarEvents = [
     { date: 'Dec 15', type: 'dividend', ticker: 'VUSA', amount: '£52.43' },
@@ -14,6 +16,10 @@ export const CalendarButton = () => {
     { date: 'Dec 20', type: 'dividend', ticker: 'VTI', amount: '£28.91' },
     { date: 'Dec 22', type: 'earnings', ticker: 'AAPL', time: '7:00 AM' },
   ];
+
+  const handleCalendarClick = () => {
+    navigate('/events');
+  };
 
   if (isOpen) {
     return (
@@ -48,6 +54,14 @@ export const CalendarButton = () => {
                 </div>
               </div>
             ))}
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="w-full mt-2"
+              onClick={handleCalendarClick}
+            >
+              View All Events
+            </Button>
           </CardContent>
         </Card>
       </div>

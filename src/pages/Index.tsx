@@ -34,17 +34,12 @@ const Index = () => {
         {/* Analytics Widgets */}
         <AnalyticsWidgets />
 
-        {/* Additional Widgets */}
+        {/* Bottom Widgets - All 1x1 in same row */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <NotesWidget />
-          <div className="md:col-span-2">
-            <DividendTracker />
-          </div>
-          <WatchlistWidget />
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <DividendTracker />
           <CurrencyWidget />
+          <WatchlistWidget />
         </div>
       </div>
     </div>

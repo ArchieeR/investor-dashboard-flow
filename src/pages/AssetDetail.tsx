@@ -7,6 +7,7 @@ import { AssetOverview } from '@/components/asset/AssetOverview';
 import { AssetPerformance } from '@/components/asset/AssetPerformance';
 import { AssetHoldings } from '@/components/asset/AssetHoldings';
 import { AssetSectorAllocation } from '@/components/asset/AssetSectorAllocation';
+import { AssetCountryExposure } from '@/components/asset/AssetCountryExposure';
 import { AssetNews } from '@/components/asset/AssetNews';
 
 const AssetDetail = () => {
@@ -44,10 +45,11 @@ const AssetDetail = () => {
             <AssetPerformance />
           </div>
           
-          {/* Right column - Holdings and Sector Allocation */}
+          {/* Right column - Holdings, Sector Allocation, and Country Exposure */}
           <div className="space-y-6">
             <AssetHoldings />
             <AssetSectorAllocation />
+            <AssetCountryExposure />
           </div>
         </div>
         
