@@ -15,9 +15,9 @@ import { WatchlistWidget } from '@/components/portfolio/WatchlistWidget';
 const Index = () => {
   const [activeTab, setActiveTab] = useState('Portfolio');
 
-  // The eight specified widgets in iPad-style grid
+  // Complete widget grid with all widgets properly integrated
   const [gridItems, setGridItems] = useState<GridItem[]>([
-    // Row 1 - 4 widgets, 2x2 each
+    // Row 1 - 4 visualization widgets, 2x2 each
     {
       id: 'sector-allocation',
       x: 0,
@@ -59,7 +59,7 @@ const Index = () => {
       minHeight: 2
     },
     
-    // Row 2 - 4 widgets, 2x1 each
+    // Row 2 - 4 utility widgets, 2x1 each  
     {
       id: 'notes',
       x: 0,
@@ -107,10 +107,10 @@ const Index = () => {
       <TopNavigation activeTab={activeTab} onTabChange={setActiveTab} />
       
       <div className="container mx-auto px-4 py-6">
-        {/* Fixed Top Section - Not draggable */}
+        {/* Fixed Top Section - Portfolio Chart, Analytics, News, and Holdings Table */}
         <FixedTopSection />
         
-        {/* iPad-style Widget Grid Section */}
+        {/* Widget Grid Section - All movable/resizable widgets */}
         <div>
           <h3 className="text-lg font-semibold mb-4 text-muted-foreground">
             Portfolio Widgets
