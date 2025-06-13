@@ -183,11 +183,10 @@ export const EnhancedPortfolioTable = () => {
   const renderTableHeader = () => (
     <thead>
       <tr className="border-b">
-        {viewMode !== 'general' && <th className="pb-3 w-8"></th>}
         {visibleColumns.map((column) => (
           <th
             key={column.key}
-            className="pb-3 text-sm font-medium text-muted-foreground cursor-pointer hover:text-foreground text-left"
+            className="pb-3 text-sm font-medium text-muted-foreground cursor-pointer hover:text-foreground text-left px-2"
             style={{ width: column.width }}
             onClick={() => handleSort(column.key)}
           >
@@ -199,16 +198,14 @@ export const EnhancedPortfolioTable = () => {
             </div>
           </th>
         ))}
-        <th className="pb-3 w-8"></th>
       </tr>
     </thead>
   );
 
-  const renderHoldingRow = (holding: PortfolioHolding) => (
+  const renderHoldingRow = (holding: PortfolioHolding, showGroupColumn = false) => (
     <tr key={holding.id} className="border-b hover:bg-accent transition-colors">
-      {viewMode !== 'general' && <td className="py-2"></td>}
       {visibleColumns.map((column) => (
-        <td key={column.key} className="py-2">
+        <td key={column.key} className="py-2 px-2">
           {column.key === 'type' ? (
             <Badge variant="secondary" className={getTypeColor(holding.type)}>
               {holding.type}
@@ -227,53 +224,70 @@ export const EnhancedPortfolioTable = () => {
           )}
         </td>
       ))}
-      <td className="py-2">
-        <ChevronRight className="h-4 w-4 text-muted-foreground" />
-      </td>
     </tr>
   );
 
   const renderGroupedTable = () => {
-    return Object.entries(groupedHoldings).map(([groupKey, groupHoldings]) => {
-      const isExpanded = expandedGroups.has(groupKey);
-      const groupTotal = groupHoldings.reduce((sum, holding) => sum + holding.value, 0);
-      
+    if (viewMode === 'general') {
       return (
-        <div key={groupKey} className="mb-4">
-          {viewMode !== 'general' && (
-            <div
-              className="flex items-center gap-2 p-3 bg-muted/50 rounded cursor-pointer hover:bg-muted"
-              onClick={() => toggleGroup(groupKey)}
-            >
-              {isExpanded ? (
-                <ChevronDown className="h-4 w-4" />
-              ) : (
-                <ChevronRight className="h-4 w-4" />
-              )}
-              <span className="font-medium">{groupKey}</span>
-              <span className="text-sm text-muted-foreground">
-                ({groupHoldings.length} holdings, £{groupTotal.toLocaleString()})
-              </span>
-            </div>
-          )}
-          
-          {(isExpanded || viewMode === 'general') && (
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                {viewMode === 'general' && renderTableHeader()}
-                <tbody>
-                  {groupHoldings.map(renderHoldingRow)}
-                </tbody>
-              </table>
-            </div>
-          )}
+        <div className="overflow-x-auto">
+          <table className="w-full table-fixed">
+            {renderTableHeader()}
+            <tbody>
+              {sortedHoldings.map(holding => renderHoldingRow(holding))}
+            </tbody>
+          </table>
         </div>
       );
-    });
+    }
+
+    return (
+      <div className="space-y-4">
+        <div className="overflow-x-auto">
+          <table className="w-full table-fixed">
+            {renderTableHeader()}
+          </table>
+        </div>
+        
+        {Object.entries(groupedHoldings).map(([groupKey, groupHoldings]) => {
+          const isExpanded = expandedGroups.has(groupKey);
+          const groupTotal = groupHoldings.reduce((sum, holding) => sum + holding.value, 0);
+          
+          return (
+            <div key={groupKey}>
+              <div
+                className="flex items-center gap-2 p-3 bg-muted/50 rounded cursor-pointer hover:bg-muted"
+                onClick={() => toggleGroup(groupKey)}
+              >
+                {isExpanded ? (
+                  <ChevronDown className="h-4 w-4" />
+                ) : (
+                  <ChevronRight className="h-4 w-4" />
+                )}
+                <span className="font-medium">{groupKey}</span>
+                <span className="text-sm text-muted-foreground">
+                  ({groupHoldings.length} holdings, £{groupTotal.toLocaleString()})
+                </span>
+              </div>
+              
+              {isExpanded && (
+                <div className="overflow-x-auto">
+                  <table className="w-full table-fixed">
+                    <tbody>
+                      {groupHoldings.map(holding => renderHoldingRow(holding, true))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    );
   };
 
   return (
-    <Card>
+    <Card className="h-full">
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle>Holdings</CardTitle>
@@ -286,14 +300,7 @@ export const EnhancedPortfolioTable = () => {
         </div>
       </CardHeader>
       
-      <CardContent>
-        {viewMode !== 'general' && (
-          <div className="mb-4">
-            <table className="w-full">
-              {renderTableHeader()}
-            </table>
-          </div>
-        )}
+      <CardContent className="h-full overflow-auto">
         {renderGroupedTable()}
       </CardContent>
     </Card>

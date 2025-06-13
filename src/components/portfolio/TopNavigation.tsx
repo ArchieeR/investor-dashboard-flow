@@ -2,12 +2,17 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { SearchDropdown } from '@/components/search/SearchDropdown';
 import { NotificationDropdown } from '@/components/notifications/NotificationDropdown';
 import { AccountDropdown } from '@/components/account/AccountDropdown';
 import { CalendarButton } from './CalendarButton';
-import { Bell, Search, Settings, TrendingUp, TrendingDown } from 'lucide-react';
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+} from "@/components/ui/navigation-menu";
 
 interface TopNavigationProps {
   activeTab: string;
@@ -15,29 +20,24 @@ interface TopNavigationProps {
 }
 
 export const TopNavigation = ({ activeTab, onTabChange }: TopNavigationProps) => {
-  const [searchOpen, setSearchOpen] = useState(false);
-  const [notificationOpen, setNotificationOpen] = useState(false);
   const navigate = useNavigate();
 
-  const totalValue = 48193;
-  const dayChange = 1307;
-  const dayChangePercent = 2.79;
-  const isPositive = dayChange >= 0;
+  const handleTabClick = (tabName: string, path: string) => {
+    onTabChange(tabName);
+    navigate(path);
+  };
 
-  const tabs = [
-    { name: 'Portfolio', path: '/' },
+  const handleCalendarClick = () => {
+    onTabChange('Events');
+    navigate('/events');
+  };
+
+  const researchTools = [
     { name: 'News', path: '/news' },
     { name: 'Events', path: '/events' },
     { name: 'Screener', path: '/screener' },
     { name: 'Broker Comparer', path: '/broker-comparer' },
-    { name: 'Community', path: '/community' },
-    { name: 'Learn', path: '/learn' }
   ];
-
-  const handleTabClick = (tab: any) => {
-    onTabChange(tab.name);
-    navigate(tab.path);
-  };
 
   return (
     <nav className="border-b bg-card/50 backdrop-blur supports-[backdrop-filter]:bg-card/50">
@@ -46,49 +46,68 @@ export const TopNavigation = ({ activeTab, onTabChange }: TopNavigationProps) =>
           <div className="flex items-center space-x-8">
             <div className="flex items-center space-x-2">
               <div className="text-xl font-bold text-primary">Portfolio</div>
-              <Badge variant="secondary" className="text-xs">
-                Live
-              </Badge>
             </div>
             
-            <div className="hidden md:flex space-x-1">
-              {tabs.map((tab) => (
-                <Button
-                  key={tab.name}
-                  variant={activeTab === tab.name ? "default" : "ghost"}
-                  className="text-sm"
-                  onClick={() => handleTabClick(tab)}
-                >
-                  {tab.name}
-                </Button>
-              ))}
+            <div className="hidden md:flex items-center space-x-1">
+              <Button
+                variant={activeTab === 'Portfolio' ? "default" : "ghost"}
+                className="text-sm"
+                onClick={() => handleTabClick('Portfolio', '/')}
+              >
+                Portfolio
+              </Button>
+
+              <NavigationMenu>
+                <NavigationMenuList>
+                  <NavigationMenuItem>
+                    <NavigationMenuTrigger 
+                      className={`text-sm ${activeTab.includes('Research') ? 'bg-accent' : ''}`}
+                    >
+                      Research Tools
+                    </NavigationMenuTrigger>
+                    <NavigationMenuContent>
+                      <div className="w-48 p-2">
+                        {researchTools.map((tool) => (
+                          <Button
+                            key={tool.name}
+                            variant="ghost"
+                            className="w-full justify-start text-sm mb-1"
+                            onClick={() => handleTabClick(tool.name, tool.path)}
+                          >
+                            {tool.name}
+                          </Button>
+                        ))}
+                      </div>
+                    </NavigationMenuContent>
+                  </NavigationMenuItem>
+                </NavigationMenuList>
+              </NavigationMenu>
+
+              <Button
+                variant={activeTab === 'Community' ? "default" : "ghost"}
+                className="text-sm"
+                onClick={() => handleTabClick('Community', '/community')}
+              >
+                Community
+              </Button>
+
+              <Button
+                variant={activeTab === 'Learn' ? "default" : "ghost"}
+                className="text-sm"
+                onClick={() => handleTabClick('Learn', '/learn')}
+              >
+                Learn
+              </Button>
             </div>
           </div>
 
-          <div className="flex items-center space-x-4">
-            <div className="hidden lg:flex items-center space-x-4 text-sm">
-              <div className="font-semibold text-foreground">
-                £{totalValue.toLocaleString()}
-              </div>
-              <div className={`flex items-center space-x-1 font-medium ${
-                isPositive ? 'text-green-600' : 'text-red-600'
-              }`}>
-                {isPositive ? (
-                  <TrendingUp className="h-4 w-4" />
-                ) : (
-                  <TrendingDown className="h-4 w-4" />
-                )}
-                <span>{isPositive ? '+' : ''}£{dayChange}</span>
-                <span>({isPositive ? '+' : ''}{dayChangePercent}%)</span>
-              </div>
-            </div>
-
-            <div className="flex items-center space-x-2">
-              <SearchDropdown />
+          <div className="flex items-center space-x-2">
+            <SearchDropdown />
+            <div onClick={handleCalendarClick} className="cursor-pointer">
               <CalendarButton />
-              <NotificationDropdown />
-              <AccountDropdown />
             </div>
+            <NotificationDropdown />
+            <AccountDropdown />
           </div>
         </div>
       </div>
