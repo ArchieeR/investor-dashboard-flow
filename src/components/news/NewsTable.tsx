@@ -148,7 +148,12 @@ const newsData: NewsItem[] = [
   }
 ];
 
-export const NewsTable = () => {
+interface NewsTableProps {
+  importanceFilter?: string;
+  assetFilter?: string;
+}
+
+export const NewsTable = ({ importanceFilter = 'HIGH', assetFilter = 'All assets' }: NewsTableProps) => {
   const getImportanceColor = (importance: string) => {
     switch (importance) {
       case 'HIGH': return 'bg-green-500';
@@ -167,6 +172,13 @@ export const NewsTable = () => {
     }
   };
 
+  // Filter news data based on importance and asset
+  const filteredNews = newsData.filter(item => {
+    const matchesImportance = item.importance === importanceFilter;
+    const matchesAsset = assetFilter === 'All assets' || item.asset === assetFilter;
+    return matchesImportance && matchesAsset;
+  });
+
   return (
     <div className="space-y-1">
       {/* Header */}
@@ -177,9 +189,9 @@ export const NewsTable = () => {
         <div className="col-span-2 text-right">Impact</div>
       </div>
       
-      {/* News Items - Remove max-height and overflow to allow full page scroll */}
+      {/* News Items - Full page scroll */}
       <div className="space-y-1">
-        {newsData.map((item) => (
+        {filteredNews.map((item) => (
           <div
             key={item.id}
             className="grid grid-cols-12 gap-4 px-4 py-3 hover:bg-accent transition-colors cursor-pointer rounded-md"

@@ -7,6 +7,8 @@ import { SentimentLogo } from '@/components/news/SentimentLogo';
 
 const News = () => {
   const [activeTab, setActiveTab] = useState('News');
+  const [importanceFilter, setImportanceFilter] = useState('HIGH');
+  const [assetFilter, setAssetFilter] = useState('All assets');
 
   return (
     <div className="min-h-screen bg-background">
@@ -21,11 +23,19 @@ const News = () => {
             </div>
           </div>
           
-          <NewsFilters />
+          <NewsFilters 
+            onImportanceChange={setImportanceFilter}
+            onAssetChange={setAssetFilter}
+            currentImportance={importanceFilter}
+            currentAsset={assetFilter}
+          />
           
           {/* News table with full page scrolling */}
           <div className="pb-8">
-            <NewsTable />
+            <NewsTable 
+              importanceFilter={importanceFilter}
+              assetFilter={assetFilter}
+            />
           </div>
         </div>
       </div>

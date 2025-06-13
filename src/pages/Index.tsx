@@ -134,15 +134,16 @@ const Index = () => {
       <TopNavigation activeTab={activeTab} onTabChange={setActiveTab} />
       
       <div className="container mx-auto px-4 py-6">
-        {/* Fixed Top Section - Portfolio Chart, News, and Holdings Table */}
+        {/* Fixed Top Section - Portfolio Chart, Holdings Table and Notification Widget */}
         <FixedTopSection />
         
-        {/* Widget Grid Section - All movable/resizable widgets */}
+        {/* Widget Grid Section - Full width with padding */}
         <div className="mt-8">
           <h3 className="text-lg font-semibold mb-4 text-muted-foreground">
             Portfolio Widgets
           </h3>
-          <div className="border-2 border-dashed border-gray-300 p-4 rounded-lg">
+          {/* Remove the border container and expand to full width */}
+          <div className="w-full">
             <GridSystem 
               items={gridItems} 
               onItemsChange={setGridItems}

@@ -1,60 +1,49 @@
 
 import { Card } from '@/components/ui/card';
 import { PortfolioChart } from '@/components/portfolio/PortfolioChart';
-import { NewsFeedWidget } from '@/components/widgets/NewsFeedWidget';
 import { EnhancedPortfolioTable } from '@/components/portfolio/EnhancedPortfolioTable';
 import { NotificationWidget } from '@/components/portfolio/NotificationWidget';
 
 export const FixedTopSection = () => {
   const cellSize = 120;
 
-  console.log('FixedTopSection rendering - Portfolio Chart, News, and Holdings Table only');
+  console.log('FixedTopSection rendering - Portfolio Chart and Holdings with Notification Widget');
 
   return (
     <div className="space-y-4 mb-6">
-      {/* Top Row: Portfolio Chart + News + Notifications */}
+      {/* Top Row: Portfolio Chart - Full width */}
+      <Card 
+        className="w-full"
+        style={{ 
+          height: `${4 * cellSize}px` 
+        }}
+      >
+        <PortfolioChart />
+      </Card>
+      
+      {/* Second Row: Holdings Table + Day/Total Gains + Market News */}
       <div className="flex gap-4">
-        {/* Portfolio Chart - 4x4 */}
+        {/* Holdings Table - Takes majority of width */}
         <Card 
           className="flex-1"
           style={{ 
-            width: `${4 * cellSize}px`, 
-            height: `${4 * cellSize}px` 
+            minHeight: `${4 * cellSize}px` 
           }}
         >
-          <PortfolioChart />
-        </Card>
-        
-        {/* Market News - 4x4 */}
-        <Card 
-          style={{ 
-            width: `${4 * cellSize}px`, 
-            height: `${4 * cellSize}px` 
-          }}
-        >
-          <NewsFeedWidget />
+          <EnhancedPortfolioTable />
         </Card>
 
-        {/* Notification Widget - 2x4 */}
+        {/* Notification Widget - Fixed width on right */}
         <Card 
+          className="flex-shrink-0"
           style={{ 
-            width: `${2 * cellSize}px`, 
+            width: `${3 * cellSize}px`, 
             height: `${4 * cellSize}px` 
           }}
         >
           <NotificationWidget />
         </Card>
       </div>
-      
-      {/* Holdings Table - Full width, 8x3 minimum */}
-      <Card 
-        style={{ 
-          width: '100%', 
-          minHeight: `${3 * cellSize}px` 
-        }}
-      >
-        <EnhancedPortfolioTable />
-      </Card>
     </div>
   );
 };

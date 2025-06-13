@@ -199,10 +199,10 @@ export const GridSystem = ({
   const containerWidth = columns * cellSize;
 
   return (
-    <div className="w-full flex justify-center">
+    <div className="w-full">
       <div 
         ref={gridRef}
-        className="relative"
+        className="relative mx-auto"
         style={{ 
           width: `${containerWidth}px`,
           height: `${getMaxRows() * cellSize}px`,

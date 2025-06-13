@@ -30,33 +30,61 @@ const assetOptions = [
   'NUCL'
 ];
 
-export const NewsFilters = () => {
-  const [importance, setImportance] = useState('HIGH');
-  const [assetFilter, setAssetFilter] = useState('All assets');
+interface NewsFiltersProps {
+  onImportanceChange?: (importance: string) => void;
+  onAssetChange?: (asset: string) => void;
+  currentImportance?: string;
+  currentAsset?: string;
+}
+
+export const NewsFilters = ({ 
+  onImportanceChange, 
+  onAssetChange, 
+  currentImportance = 'HIGH',
+  currentAsset = 'All assets'
+}: NewsFiltersProps) => {
   const [reputableSources, setReputableSources] = useState(true);
   const [otherSources, setOtherSources] = useState(true);
   const [socialMedia, setSocialMedia] = useState(false);
 
   const importanceOptions = [
-    { value: 'HIGH', label: 'HIGH', icon: BarChart3 },
-    { value: 'MED', label: 'MED', icon: TrendingUp },
-    { value: 'LOW', label: 'LOW', icon: TrendingDown }
+    { 
+      value: 'HIGH', 
+      label: 'HIGH', 
+      icon: BarChart3,
+      activeClass: 'bg-green-500 text-white hover:bg-green-600',
+      inactiveClass: 'bg-green-100 text-green-700 hover:bg-green-200'
+    },
+    { 
+      value: 'MED', 
+      label: 'MED', 
+      icon: TrendingUp,
+      activeClass: 'bg-yellow-500 text-white hover:bg-yellow-600',
+      inactiveClass: 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200'
+    },
+    { 
+      value: 'LOW', 
+      label: 'LOW', 
+      icon: TrendingDown,
+      activeClass: 'bg-red-500 text-white hover:bg-red-600',
+      inactiveClass: 'bg-red-100 text-red-700 hover:bg-red-200'
+    }
   ];
 
   return (
-    <div className="sticky top-16 z-10 bg-background border-b border-border pb-4">
+    <div className="sticky top-16 z-30 bg-background border-b border-border pb-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
           {importanceOptions.map((option) => (
             <Button
               key={option.value}
-              variant={importance === option.value ? "default" : "ghost"}
+              variant="ghost"
               size="sm"
-              onClick={() => setImportance(option.value)}
-              className={`flex items-center space-x-2 ${
-                importance === option.value 
-                  ? 'bg-sky-500 text-white hover:bg-sky-600' 
-                  : 'text-muted-foreground hover:text-foreground hover:bg-sky-50'
+              onClick={() => onImportanceChange?.(option.value)}
+              className={`flex items-center space-x-2 border ${
+                currentImportance === option.value 
+                  ? option.activeClass
+                  : option.inactiveClass
               }`}
             >
               <option.icon className="h-4 w-4" />
@@ -68,13 +96,13 @@ export const NewsFilters = () => {
         <div className="flex items-center space-x-2">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="flex items-center space-x-2 border-sky-300 text-sky-700 hover:bg-sky-50">
+              <Button variant="outline" className="flex items-center space-x-2 border-sky-300 text-sky-700 hover:bg-sky-50 z-50">
                 <Filter className="h-4 w-4" />
                 <span>News Sources</span>
                 <ChevronDown className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56 p-3">
+            <DropdownMenuContent align="end" className="w-56 p-3 z-50 bg-background">
               <div className="space-y-3">
                 <div className="flex items-center space-x-2">
                   <Checkbox 
@@ -106,16 +134,16 @@ export const NewsFilters = () => {
           
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="flex items-center space-x-2 border-sky-300 text-sky-700 hover:bg-sky-50">
-                <span>{assetFilter}</span>
+              <Button variant="outline" className="flex items-center space-x-2 border-sky-300 text-sky-700 hover:bg-sky-50 z-50">
+                <span>{currentAsset}</span>
                 <ChevronDown className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48 max-h-60 overflow-y-auto">
+            <DropdownMenuContent align="end" className="w-48 max-h-60 overflow-y-auto z-50 bg-background">
               {assetOptions.map((asset) => (
                 <DropdownMenuItem
                   key={asset}
-                  onClick={() => setAssetFilter(asset)}
+                  onClick={() => onAssetChange?.(asset)}
                   className="cursor-pointer"
                 >
                   {asset}
