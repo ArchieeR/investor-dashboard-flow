@@ -112,7 +112,11 @@ export const NewsFilters = ({
                 <ChevronDown className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56 p-3 z-50 bg-background">
+            <DropdownMenuContent 
+              align="end" 
+              className="w-56 p-3 z-[300] bg-popover shadow-lg border-border"
+              sideOffset={4}
+            >
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2">
@@ -157,7 +161,11 @@ export const NewsFilters = ({
                 <ChevronDown className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48 max-h-60 overflow-y-auto z-50 bg-background">
+            <DropdownMenuContent 
+              align="end" 
+              className="w-48 max-h-60 overflow-y-auto z-[300] bg-popover shadow-lg border-border"
+              sideOffset={4}
+            >
               {assetOptions.map((asset) => (
                 <DropdownMenuItem
                   key={asset}

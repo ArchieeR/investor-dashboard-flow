@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { TopNavigation } from '@/components/portfolio/TopNavigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -55,84 +54,120 @@ const Events = () => {
     }
   };
 
-  // Dynamic events data with actual dates
+  // Enhanced events data with actual dates and your requested examples
   const earningsData = [
     {
-      date: 'Mon 16',
-      fullDate: '2025-06-16',
+      date: 'Today',
+      fullDate: today.toISOString().split('T')[0],
       count: 2,
       events: [
-        { time: '7:00 AM', ticker: 'AAPL', company: 'Apple Inc.', type: 'earnings' },
-        { time: '4:30 PM', ticker: 'MSFT', company: 'Microsoft Corp.', type: 'earnings' }
+        { time: '4:30 PM', ticker: 'AAPL', company: 'Apple Q2 Earnings Call', type: 'earnings' },
+        { time: '7:00 AM', ticker: 'UK', company: 'UK GDP Data Release', type: 'economic' }
       ]
     },
     {
-      date: 'Tue 17', 
-      fullDate: '2025-06-17',
-      count: 4,
+      date: 'Tomorrow', 
+      fullDate: tomorrow.toISOString().split('T')[0],
+      count: 2,
       events: [
-        { time: '6:00 AM', ticker: 'GOOGL', company: 'Alphabet Inc.', type: 'earnings' },
-        { time: '7:30 AM', ticker: 'AMZN', company: 'Amazon.com Inc.', type: 'earnings' },
-        { time: '4:15 PM', ticker: 'TSLA', company: 'Tesla Inc.', type: 'earnings' },
-        { time: '5:00 PM', ticker: 'NVDA', company: 'NVIDIA Corp.', type: 'earnings' }
+        { time: '2:00 PM', ticker: 'ECB', company: 'ECB Rate Decision', type: 'economic' },
+        { time: 'Ex-Date', ticker: 'BP', company: 'BP Dividend Ex-Date', type: 'dividend' }
+      ]
+    }
+  ];
+
+  // This Week events
+  const thisWeekStart = new Date(today);
+  thisWeekStart.setDate(today.getDate() - today.getDay() + 2); // Tuesday
+  const thisWeekFriday = new Date(today);
+  thisWeekFriday.setDate(today.getDate() - today.getDay() + 5); // Friday
+  const thisWeekThursday = new Date(today);
+  thisWeekThursday.setDate(today.getDate() - today.getDay() + 4); // Thursday
+
+  const thisWeekEvents = [
+    {
+      date: 'Friday',
+      fullDate: thisWeekFriday.toISOString().split('T')[0],
+      count: 1,
+      events: [
+        { time: '8:30 AM', ticker: 'US', company: 'US Jobs Report', type: 'economic' }
       ]
     },
     {
-      date: 'Wed 18',
-      fullDate: '2025-06-18',
-      count: 3,
+      date: 'Thursday',
+      fullDate: thisWeekThursday.toISOString().split('T')[0],
+      count: 1,
       events: [
-        { time: '7:00 AM', ticker: 'META', company: 'Meta Platforms Inc.', type: 'earnings' },
-        { time: '4:30 PM', ticker: 'NFLX', company: 'Netflix Inc.', type: 'earnings' },
-        { time: '5:15 PM', ticker: 'CRM', company: 'Salesforce Inc.', type: 'earnings' }
+        { time: 'Rebalance', ticker: 'VUSA', company: 'Vanguard ESG ETF Rebalance', type: 'dividend' }
+      ]
+    }
+  ];
+
+  // Next Week events
+  const nextWeekWed = new Date(today);
+  nextWeekWed.setDate(today.getDate() - today.getDay() + 10); // Next Wednesday
+  const nextWeekThu = new Date(today);
+  nextWeekThu.setDate(today.getDate() - today.getDay() + 11); // Next Thursday
+
+  const nextWeekEvents = [
+    {
+      date: 'Wed (Next Week)',
+      fullDate: nextWeekWed.toISOString().split('T')[0],
+      count: 1,
+      events: [
+        { time: '2:00 PM', ticker: 'FED', company: 'FOMC Minutes Release', type: 'economic' }
+      ]
+    },
+    {
+      date: 'Thu (Next Week)',
+      fullDate: nextWeekThu.toISOString().split('T')[0],
+      count: 1,
+      events: [
+        { time: '4:30 PM', ticker: 'TSLA', company: 'Tesla Q2 Earnings Call', type: 'earnings' }
       ]
     }
   ];
 
   const dividendEvents = [
-    { date: 'Mon 16', fullDate: '2025-06-16', count: 1, events: [{ time: 'Ex-Date', ticker: 'VUSA', company: 'Vanguard S&P 500', type: 'dividend', amount: '£0.52' }] },
-    { date: 'Wed 18', fullDate: '2025-06-18', count: 2, events: [
-      { time: 'Ex-Date', ticker: 'VTI', company: 'Vanguard Total Stock', type: 'dividend', amount: '£0.29' },
-      { time: 'Pay Date', ticker: 'EQQQ', company: 'Invesco NASDAQ-100', type: 'dividend', amount: '£0.16' }
-    ]}
+    { date: 'Today', fullDate: today.toISOString().split('T')[0], count: 1, events: [{ time: 'Ex-Date', ticker: 'VUSA', company: 'Vanguard S&P 500', type: 'dividend', amount: '£0.52' }] },
+    { date: 'Tomorrow', fullDate: tomorrow.toISOString().split('T')[0], count: 1, events: [{ time: 'Ex-Date', ticker: 'BP', company: 'BP Dividend Ex-Date', type: 'dividend', amount: '£0.29' }] }
   ];
 
   const economicEvents = [
-    { date: 'Mon 16', fullDate: '2025-06-16', count: 1, events: [{ time: '2:00 PM', title: 'Federal Reserve Interest Rate Decision', type: 'Economic', impact: 'High' }] },
-    { date: 'Wed 18', fullDate: '2025-06-18', count: 1, events: [{ time: '8:45 AM', title: 'ECB Monetary Policy Meeting', type: 'Economic', impact: 'High' }] }
+    { date: 'Today', fullDate: today.toISOString().split('T')[0], count: 1, events: [{ time: '7:00 AM', title: 'UK GDP Data Release', type: 'Economic', impact: 'High' }] },
+    { date: 'Tomorrow', fullDate: tomorrow.toISOString().split('T')[0], count: 1, events: [{ time: '2:00 PM', title: 'ECB Rate Decision', type: 'Economic', impact: 'High' }] }
   ];
 
   const politicalEvents = [
-    { date: 'Mon 16', fullDate: '2025-06-16', count: 1, events: [{ time: '9:00 AM', title: 'G7 Summit', type: 'Political', impact: 'Medium' }] },
-    { date: 'Tue 17', fullDate: '2025-06-17', count: 1, events: [{ time: '10:00 AM', title: 'EU Trade Policy Meeting', type: 'Political', impact: 'Medium' }] }
+    { date: 'Today', fullDate: today.toISOString().split('T')[0], count: 1, events: [{ time: '9:00 AM', title: 'G7 Summit', type: 'Political', impact: 'Medium' }] }
   ];
 
   // List view data
   const listViewData = [
     {
-      ticker: 'AVGO',
-      company: 'BROADCOM INC.',
-      marketCap: '1.16T',
+      ticker: 'AAPL',
+      company: 'APPLE INC.',
+      marketCap: '3.5T',
       epsEstimate: '1.57',
       reportedEps: '1.58',
       surprise: '0.01',
       surprisePercent: '0.69%',
-      revenue: { forecast: '14.96B', actual: '15B' },
-      date: '2025-06-16',
-      time: '2025-04-30',
+      revenue: { forecast: '89.5B', actual: '90.0B' },
+      date: today.toISOString().split('T')[0],
+      time: '4:30 PM',
       trend: 'up'
     },
     {
-      ticker: 'CRWD',
-      company: 'CROWDSTRIKE HOLDINGS, INC.',
-      marketCap: '116.75B',
+      ticker: 'TSLA',
+      company: 'TESLA INC.',
+      marketCap: '800B',
       epsEstimate: '0.66',
       reportedEps: '0.73',
       surprise: '0.07',
       surprisePercent: '10.55%',
-      revenue: { forecast: '1.1B', actual: '1.1B' },
-      date: '2025-06-17',
-      time: '2025-04-30',
+      revenue: { forecast: '25.5B', actual: '26.0B' },
+      date: nextWeekThu.toISOString().split('T')[0],
+      time: '4:30 PM',
       trend: 'up'
     }
   ];
@@ -147,16 +182,37 @@ const Events = () => {
   };
 
   const getCalendarData = () => {
-    const events = [];
-    if (selectedEarnings) events.push(...earningsData);
-    if (selectedEconomic) events.push(...economicEvents);
+    let events = [];
+    
+    // Add earnings data
+    if (selectedEarnings) {
+      events.push(...earningsData);
+      if (selectedWeek === 'This Week') events.push(...thisWeekEvents.filter(e => e.events.some(ev => ev.type === 'earnings')));
+      if (selectedWeek === 'Next Week') events.push(...nextWeekEvents.filter(e => e.events.some(ev => ev.type === 'earnings')));
+    }
+    
+    // Add economic data
+    if (selectedEconomic) {
+      events.push(...economicEvents);
+      if (selectedWeek === 'This Week') events.push(...thisWeekEvents.filter(e => e.events.some(ev => ev.type === 'economic')));
+      if (selectedWeek === 'Next Week') events.push(...nextWeekEvents.filter(e => e.events.some(ev => ev.type === 'economic')));
+    }
+    
+    // Add political data
     if (selectedPolitical) events.push(...politicalEvents);
-    if (selectedDividends) events.push(...dividendEvents);
+    
+    // Add dividend data
+    if (selectedDividends) {
+      events.push(...dividendEvents);
+      if (selectedWeek === 'This Week') events.push(...thisWeekEvents.filter(e => e.events.some(ev => ev.type === 'dividend')));
+    }
     
     // Filter events based on selected date range
-    const filteredEvents = events.filter(dayData => 
-      isDateInRange(dayData.fullDate, selectedWeek)
-    );
+    const filteredEvents = events.filter(dayData => {
+      // For "This Week" and "Next Week", we already filtered above
+      if (selectedWeek === 'This Week' || selectedWeek === 'Next Week') return true;
+      return isDateInRange(dayData.fullDate, selectedWeek);
+    });
     
     const mergedEvents = filteredEvents.reduce((acc, dayData) => {
       const existingDay = acc.find(d => d.date === dayData.date);

@@ -44,7 +44,6 @@ export const TopNavigation = ({ activeTab, onTabChange }: TopNavigationProps) =>
     { name: 'Events', path: '/events' },
     { name: 'Screener', path: '/screener' },
     { name: 'Company Filings', path: '/company-filings' },
-    { name: 'Broker', path: '/broker' },
     { name: 'Broker Comparison', path: '/broker-comparer' },
   ];
 
@@ -69,11 +68,11 @@ export const TopNavigation = ({ activeTab, onTabChange }: TopNavigationProps) =>
               <DropdownMenu open={isResearchOpen} onOpenChange={setIsResearchOpen}>
                 <DropdownMenuTrigger asChild>
                   <Button
-                    variant={activeTab.includes('Research') || ['News', 'Events', 'Screener', 'Company Filings', 'Broker', 'Broker Comparison'].includes(activeTab) ? "default" : "ghost"}
+                    variant={activeTab.includes('Research') || ['News', 'Events', 'Screener', 'Company Filings', 'Broker Comparison'].includes(activeTab) ? "default" : "ghost"}
                     className="text-sm flex items-center gap-1"
                   >
                     Research Tools
-                    <ChevronDown className="h-3 w-3" />
+                    <ChevronDown className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent 

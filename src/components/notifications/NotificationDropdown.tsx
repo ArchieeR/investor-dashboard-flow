@@ -85,7 +85,11 @@ export const NotificationDropdown = () => {
           )}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-80 bg-popover border-border">
+      <DropdownMenuContent 
+        align="end" 
+        className="w-80 bg-popover border-border z-[300] shadow-lg"
+        sideOffset={4}
+      >
         <CardHeader className="pb-2">
           <div className="flex items-center justify-between">
             <CardTitle className="text-sm">Notifications</CardTitle>
