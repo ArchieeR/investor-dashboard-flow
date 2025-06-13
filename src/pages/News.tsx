@@ -7,7 +7,7 @@ import { SentimentLogo } from '@/components/news/SentimentLogo';
 
 const News = () => {
   const [activeTab, setActiveTab] = useState('News');
-  const [importanceFilter, setImportanceFilter] = useState(['HIGH']);
+  const [importanceFilter, setImportanceFilter] = useState('HIGH');
   const [assetFilter, setAssetFilter] = useState('All assets');
 
   return (

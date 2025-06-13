@@ -1,4 +1,3 @@
-
 import { Badge } from '@/components/ui/badge';
 
 interface NewsItem {
@@ -150,11 +149,11 @@ const newsData: NewsItem[] = [
 ];
 
 interface NewsTableProps {
-  importanceFilter?: string[];
+  importanceFilter?: string;
   assetFilter?: string;
 }
 
-export const NewsTable = ({ importanceFilter = ['HIGH'], assetFilter = 'All assets' }: NewsTableProps) => {
+export const NewsTable = ({ importanceFilter = 'HIGH', assetFilter = 'All assets' }: NewsTableProps) => {
   const getImportanceColor = (importance: string) => {
     switch (importance) {
       case 'HIGH': return 'bg-green-500';
@@ -175,7 +174,7 @@ export const NewsTable = ({ importanceFilter = ['HIGH'], assetFilter = 'All asse
 
   // Filter news data based on importance and asset
   const filteredNews = newsData.filter(item => {
-    const matchesImportance = importanceFilter.includes(item.importance);
+    const matchesImportance = item.importance === importanceFilter;
     const matchesAsset = assetFilter === 'All assets' || item.asset === assetFilter;
     return matchesImportance && matchesAsset;
   });

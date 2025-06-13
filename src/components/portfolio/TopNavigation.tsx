@@ -69,10 +69,10 @@ export const TopNavigation = ({ activeTab, onTabChange }: TopNavigationProps) =>
               <DropdownMenu open={isResearchOpen} onOpenChange={setIsResearchOpen}>
                 <DropdownMenuTrigger asChild>
                   <Button
-                    variant={['News', 'Events', 'Screener', 'Company Filings', 'Broker', 'Broker Comparison'].includes(activeTab) ? "default" : "ghost"}
+                    variant={activeTab.includes('Research') || ['News', 'Events', 'Screener', 'Company Filings', 'Broker', 'Broker Comparison'].includes(activeTab) ? "default" : "ghost"}
                     className="text-sm flex items-center gap-1"
                   >
-                    Research
+                    Research Tools
                     <ChevronDown className="h-3 w-3" />
                   </Button>
                 </DropdownMenuTrigger>
