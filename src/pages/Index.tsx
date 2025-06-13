@@ -19,44 +19,50 @@ const Index = () => {
   const [activeTab, setActiveTab] = useState('Portfolio');
 
   const [gridItems, setGridItems] = useState<GridItem[]>([
-    // Holdings Table - large widget, minimum 4x3
+    // Fixed widgets at the top
+    // Portfolio Chart - 4x8 at the very top
     {
-      id: 'holdings-table',
+      id: 'portfolio-chart',
       x: 0,
       y: 0,
       width: 4,
-      height: 3,
-      component: EnhancedPortfolioTable,
-      minWidth: 4,
-      minHeight: 3
-    },
-    // Portfolio Chart - large widget, minimum 4x2
-    {
-      id: 'portfolio-chart',
-      x: 4,
-      y: 0,
-      width: 4,
-      height: 2,
+      height: 8,
       component: PortfolioChart,
+      fixed: true,
       minWidth: 4,
-      minHeight: 2
+      minHeight: 8
     },
-    // Analytics Widgets - spans 4x2
+    // Analytics Widgets - 4x8 next to chart
     {
       id: 'analytics',
       x: 4,
-      y: 2,
+      y: 0,
       width: 4,
-      height: 1,
+      height: 8,
       component: AnalyticsWidgets,
+      fixed: true,
       minWidth: 4,
-      minHeight: 1
+      minHeight: 8
     },
+    // Holdings Table - 8x8 directly underneath
+    {
+      id: 'holdings-table',
+      x: 0,
+      y: 8,
+      width: 8,
+      height: 8,
+      component: EnhancedPortfolioTable,
+      fixed: true,
+      minWidth: 8,
+      minHeight: 8
+    },
+    
+    // Moveable widgets below the fixed ones (starting from y: 16)
     // Allocation Pie Chart - 2x2
     {
       id: 'allocation-pie',
       x: 0,
-      y: 3,
+      y: 16,
       width: 2,
       height: 2,
       component: AllocationPieChart,
@@ -67,29 +73,18 @@ const Index = () => {
     {
       id: 'country-exposure',
       x: 2,
-      y: 3,
+      y: 16,
       width: 2,
       height: 2,
       component: CountryExposure,
-      minWidth: 1,
-      minHeight: 1
-    },
-    // Notification Widget - 2x2
-    {
-      id: 'notifications',
-      x: 4,
-      y: 3,
-      width: 2,
-      height: 2,
-      component: NotificationWidget,
       minWidth: 2,
       minHeight: 2
     },
     // News Feed - 2x2
     {
       id: 'news-feed',
-      x: 6,
-      y: 3,
+      x: 4,
+      y: 16,
       width: 2,
       height: 2,
       component: NewsFeedWidget,
@@ -99,57 +94,68 @@ const Index = () => {
     // Earnings Calendar - 2x2
     {
       id: 'earnings',
-      x: 0,
-      y: 5,
+      x: 6,
+      y: 16,
       width: 2,
       height: 2,
       component: EarningsCalendar,
       minWidth: 2,
       minHeight: 2
     },
-    // Notes Widget - 1x1
+    // Notification Widget - 2x2
+    {
+      id: 'notifications',
+      x: 0,
+      y: 18,
+      width: 2,
+      height: 2,
+      component: NotificationWidget,
+      minWidth: 2,
+      minHeight: 2
+    },
+    // Notes Widget - 2x2
     {
       id: 'notes',
       x: 2,
-      y: 5,
-      width: 1,
-      height: 1,
+      y: 18,
+      width: 2,
+      height: 2,
       component: NotesWidget,
-      minWidth: 1,
-      minHeight: 1
+      minWidth: 2,
+      minHeight: 2
     },
-    // Dividend Tracker - 1x1
+    // Dividend Tracker - 2x2
     {
       id: 'dividends',
-      x: 3,
-      y: 5,
-      width: 1,
-      height: 1,
+      x: 4,
+      y: 18,
+      width: 2,
+      height: 2,
       component: DividendTracker,
-      minWidth: 1,
-      minHeight: 1
+      minWidth: 2,
+      minHeight: 2
     },
-    // Currency Widget - 1x1
+    // Currency Widget - 2x2
     {
       id: 'currency',
-      x: 4,
-      y: 5,
-      width: 1,
-      height: 1,
+      x: 6,
+      y: 18,
+      width: 2,
+      height: 2,
       component: CurrencyWidget,
-      minWidth: 1,
-      minHeight: 1
+      minWidth: 2,
+      minHeight: 2
     },
-    // Watchlist Widget - 1x1
+    // Watchlist Widget - 2x2
     {
       id: 'watchlist',
-      x: 5,
-      y: 5,
-      width: 1,
-      height: 1,
+      x: 0,
+      y: 20,
+      width: 2,
+      height: 2,
       component: WatchlistWidget,
-      minWidth: 1,
-      minHeight: 1
+      minWidth: 2,
+      minHeight: 2
     }
   ]);
 
