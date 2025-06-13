@@ -23,6 +23,10 @@ export const ColumnManager = ({ columns, onColumnsChange }: ColumnManagerProps) 
     onColumnsChange(updatedColumns);
   };
 
+  const toggleDialog = () => {
+    setIsOpen(!isOpen);
+  };
+
   // Close dialog when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -43,49 +47,39 @@ export const ColumnManager = ({ columns, onColumnsChange }: ColumnManagerProps) 
     };
   }, [isOpen]);
 
-  if (!isOpen) {
-    return (
+  return (
+    <div className="relative">
       <Button
         ref={buttonRef}
         variant="outline"
         size="sm"
-        onClick={() => setIsOpen(true)}
+        onClick={toggleDialog}
         className="flex items-center gap-2"
       >
         <Settings className="h-4 w-4" />
-        Settings
       </Button>
-    );
-  }
-
-  return (
-    <Card ref={cardRef} className="absolute right-0 top-12 w-80 z-[150] shadow-lg bg-popover border-border">
-      <CardHeader className="pb-2">
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-sm">Manage Columns</CardTitle>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setIsOpen(false)}
-          >
-            ×
-          </Button>
-        </div>
-      </CardHeader>
-      <CardContent className="space-y-2">
-        {columns.map((column) => (
-          <div key={column.key} className="flex items-center justify-between p-2 rounded hover:bg-accent">
-            <div className="flex items-center gap-2">
-              <GripVertical className="h-4 w-4 text-muted-foreground cursor-grab" />
-              <Checkbox
-                checked={column.visible}
-                onCheckedChange={(checked) => toggleColumn(column.key, !!checked)}
-              />
-              <span className="text-sm">{column.label}</span>
-            </div>
-          </div>
-        ))}
-      </CardContent>
-    </Card>
+      
+      {isOpen && (
+        <Card ref={cardRef} className="absolute right-0 top-12 w-80 z-[150] shadow-lg bg-popover border-border">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm">Manage Columns</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            {columns.map((column) => (
+              <div key={column.key} className="flex items-center justify-between p-2 rounded hover:bg-accent">
+                <div className="flex items-center gap-2">
+                  <GripVertical className="h-4 w-4 text-muted-foreground cursor-grab" />
+                  <Checkbox
+                    checked={column.visible}
+                    onCheckedChange={(checked) => toggleColumn(column.key, !!checked)}
+                  />
+                  <span className="text-sm">{column.label}</span>
+                </div>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      )}
+    </div>
   );
 };

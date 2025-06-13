@@ -35,18 +35,42 @@ export const GridSystem = ({
   const [resizingItem, setResizingItem] = useState<string | null>(null);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [ghostPosition, setGhostPosition] = useState<{ x: number; y: number; width: number; height: number } | null>(null);
+  const [containerWidth, setContainerWidth] = useState<number>(0);
   const gridRef = useRef<HTMLDivElement>(null);
 
   // Calculate dynamic cell dimensions based on container width
   const getCellDimensions = useCallback(() => {
-    if (!gridRef.current) return { cellWidth: cellSize, cellHeight: cellSize };
+    const actualWidth = containerWidth || (gridRef.current?.clientWidth ?? 0);
+    if (!actualWidth) return { cellWidth: cellSize, cellHeight: cellSize };
     
-    const containerWidth = gridRef.current.clientWidth;
-    const cellWidth = containerWidth / columns;
+    const cellWidth = actualWidth / columns;
     const cellHeight = cellSize; // Keep height consistent
     
     return { cellWidth, cellHeight };
-  }, [columns, cellSize]);
+  }, [columns, cellSize, containerWidth]);
+
+  // Update container width on mount and resize
+  useEffect(() => {
+    const updateWidth = () => {
+      if (gridRef.current) {
+        const newWidth = gridRef.current.clientWidth;
+        setContainerWidth(newWidth);
+      }
+    };
+
+    // Initial measurement
+    updateWidth();
+
+    // Set up resize observer for responsive updates
+    const resizeObserver = new ResizeObserver(updateWidth);
+    if (gridRef.current) {
+      resizeObserver.observe(gridRef.current);
+    }
+
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, []);
 
   // Comprehensive collision resolution that handles cascading displacement
   const resolveAllCollisions = (newItems: GridItem[]) => {

@@ -9,6 +9,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Badge } from '@/components/ui/badge';
 
 const assetOptions = [
   'All assets',
@@ -45,7 +46,6 @@ export const NewsFilters = ({
 }: NewsFiltersProps) => {
   const [reputableSources, setReputableSources] = useState(true);
   const [otherSources, setOtherSources] = useState(true);
-  const [socialMedia, setSocialMedia] = useState(false);
 
   const importanceOptions = [
     { 
@@ -104,29 +104,37 @@ export const NewsFilters = ({
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56 p-3 z-50 bg-background">
               <div className="space-y-3">
-                <div className="flex items-center space-x-2">
-                  <Checkbox 
-                    id="reputable" 
-                    checked={reputableSources} 
-                    onCheckedChange={(checked) => setReputableSources(checked === true)} 
-                  />
-                  <label htmlFor="reputable" className="text-sm font-medium">Reputable Sources</label>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <Checkbox 
+                      id="reputable" 
+                      checked={reputableSources} 
+                      onCheckedChange={(checked) => setReputableSources(checked === true)} 
+                    />
+                    <label htmlFor="reputable" className="text-sm font-medium">Reputable Sources</label>
+                  </div>
+                  <Badge variant="secondary" className="text-xs bg-green-100 text-green-800">
+                    Institutional
+                  </Badge>
                 </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox 
-                    id="other" 
-                    checked={otherSources} 
-                    onCheckedChange={(checked) => setOtherSources(checked === true)} 
-                  />
-                  <label htmlFor="other" className="text-sm font-medium">Other Sources</label>
+                <div className="text-xs text-muted-foreground ml-6">
+                  Reuters, Bloomberg, FT, WSJ, The Economist
                 </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox 
-                    id="social" 
-                    checked={socialMedia} 
-                    onCheckedChange={(checked) => setSocialMedia(checked === true)} 
-                  />
-                  <label htmlFor="social" className="text-sm font-medium">Social Media</label>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <Checkbox 
+                      id="other" 
+                      checked={otherSources} 
+                      onCheckedChange={(checked) => setOtherSources(checked === true)} 
+                    />
+                    <label htmlFor="other" className="text-sm font-medium">Other Sources</label>
+                  </div>
+                  <Badge variant="secondary" className="text-xs bg-blue-100 text-blue-800">
+                    Commentary
+                  </Badge>
+                </div>
+                <div className="text-xs text-muted-foreground ml-6">
+                  MarketWatch, CNBC, Yahoo Finance
                 </div>
               </div>
             </DropdownMenuContent>

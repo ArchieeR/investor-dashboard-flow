@@ -1,7 +1,6 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Bell, TrendingUp, AlertTriangle } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
 
 export const NotificationWidget = () => {
   const notifications = [
@@ -19,7 +18,8 @@ export const NotificationWidget = () => {
       items: [
         'FTSE 100 hits record high amid energy sector rally',
         'UK Core Inflation Slows to 2.4% in May, BoE Policy Path in Focus',
-        'Bank of England holds rates at 5.25%'
+        'Bank of England holds rates at 5.25%',
+        'Technology sector leads market gains as AI optimism continues'
       ]
     },
     {
