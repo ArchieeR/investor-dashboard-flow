@@ -13,6 +13,7 @@ import {
 import { NotificationDropdown } from '@/components/notifications/NotificationDropdown';
 import { SearchDropdown } from '@/components/search/SearchDropdown';
 import { AccountDropdown } from '@/components/account/AccountDropdown';
+import { CalendarButton } from '@/components/portfolio/CalendarButton';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 interface TopNavigationProps {
@@ -61,8 +62,8 @@ export const TopNavigation = ({ activeTab, onTabChange }: TopNavigationProps) =>
                 onClick={() => handleTabClick('Portfolio', '/')}
                 className={`px-4 py-2 text-sm font-medium rounded-md transition-colors flex items-center space-x-2 ${
                   getCurrentTab() === 'Portfolio'
-                    ? 'bg-primary text-primary-foreground'
-                    : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+                    ? 'bg-sky-500 text-white'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-sky-50'
                 }`}
               >
                 <Home className="h-4 w-4" />
@@ -74,8 +75,8 @@ export const TopNavigation = ({ activeTab, onTabChange }: TopNavigationProps) =>
                   <button
                     className={`px-4 py-2 text-sm font-medium rounded-md transition-colors flex items-center space-x-1 ${
                       isResearchActive()
-                        ? 'bg-primary text-primary-foreground'
-                        : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+                        ? 'bg-sky-500 text-white'
+                        : 'text-muted-foreground hover:text-foreground hover:bg-sky-50'
                     }`}
                   >
                     <Wrench className="h-4 w-4" />
@@ -100,8 +101,8 @@ export const TopNavigation = ({ activeTab, onTabChange }: TopNavigationProps) =>
                 onClick={() => handleTabClick('Community', '/community')}
                 className={`px-4 py-2 text-sm font-medium rounded-md transition-colors flex items-center space-x-2 ${
                   getCurrentTab() === 'Community'
-                    ? 'bg-primary text-primary-foreground'
-                    : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+                    ? 'bg-sky-500 text-white'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-sky-50'
                 }`}
               >
                 <Users className="h-4 w-4" />
@@ -112,8 +113,8 @@ export const TopNavigation = ({ activeTab, onTabChange }: TopNavigationProps) =>
                 onClick={() => handleTabClick('Learn', '/learn')}
                 className={`px-4 py-2 text-sm font-medium rounded-md transition-colors flex items-center space-x-2 ${
                   getCurrentTab() === 'Learn'
-                    ? 'bg-primary text-primary-foreground'
-                    : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+                    ? 'bg-sky-500 text-white'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-sky-50'
                 }`}
               >
                 <Book className="h-4 w-4" />
@@ -128,6 +129,7 @@ export const TopNavigation = ({ activeTab, onTabChange }: TopNavigationProps) =>
               <SearchDropdown />
             </div>
             
+            <CalendarButton />
             <NotificationDropdown />
             <AccountDropdown />
           </div>

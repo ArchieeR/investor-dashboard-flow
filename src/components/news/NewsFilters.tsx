@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { BarChart3, TrendingDown, TrendingUp, ChevronDown } from 'lucide-react';
+import { BarChart3, TrendingDown, TrendingUp, ChevronDown, Filter } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -8,6 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { Checkbox } from '@/components/ui/checkbox';
 
 const assetOptions = [
   'All assets',
@@ -32,6 +33,9 @@ const assetOptions = [
 export const NewsFilters = () => {
   const [importance, setImportance] = useState('HIGH');
   const [assetFilter, setAssetFilter] = useState('All assets');
+  const [reputableSources, setReputableSources] = useState(true);
+  const [otherSources, setOtherSources] = useState(true);
+  const [socialMedia, setSocialMedia] = useState(false);
 
   const importanceOptions = [
     { value: 'HIGH', label: 'HIGH', icon: BarChart3 },
@@ -51,8 +55,8 @@ export const NewsFilters = () => {
               onClick={() => setImportance(option.value)}
               className={`flex items-center space-x-2 ${
                 importance === option.value 
-                  ? 'bg-orange-500 text-white hover:bg-orange-600' 
-                  : 'text-muted-foreground hover:text-foreground'
+                  ? 'bg-sky-500 text-white hover:bg-sky-600' 
+                  : 'text-muted-foreground hover:text-foreground hover:bg-sky-50'
               }`}
             >
               <option.icon className="h-4 w-4" />
@@ -64,7 +68,45 @@ export const NewsFilters = () => {
         <div className="flex items-center space-x-2">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="flex items-center space-x-2">
+              <Button variant="outline" className="flex items-center space-x-2 border-sky-300 text-sky-700 hover:bg-sky-50">
+                <Filter className="h-4 w-4" />
+                <span>News Sources</span>
+                <ChevronDown className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56 p-3">
+              <div className="space-y-3">
+                <div className="flex items-center space-x-2">
+                  <Checkbox 
+                    id="reputable" 
+                    checked={reputableSources} 
+                    onCheckedChange={(checked) => setReputableSources(checked === true)} 
+                  />
+                  <label htmlFor="reputable" className="text-sm font-medium">Reputable Sources</label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Checkbox 
+                    id="other" 
+                    checked={otherSources} 
+                    onCheckedChange={(checked) => setOtherSources(checked === true)} 
+                  />
+                  <label htmlFor="other" className="text-sm font-medium">Other Sources</label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Checkbox 
+                    id="social" 
+                    checked={socialMedia} 
+                    onCheckedChange={(checked) => setSocialMedia(checked === true)} 
+                  />
+                  <label htmlFor="social" className="text-sm font-medium">Social Media</label>
+                </div>
+              </div>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="flex items-center space-x-2 border-sky-300 text-sky-700 hover:bg-sky-50">
                 <span>{assetFilter}</span>
                 <ChevronDown className="h-4 w-4" />
               </Button>

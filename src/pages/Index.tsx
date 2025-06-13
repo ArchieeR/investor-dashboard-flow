@@ -5,6 +5,10 @@ import { PortfolioChart } from '@/components/portfolio/PortfolioChart';
 import { NotificationWidget } from '@/components/portfolio/NotificationWidget';
 import { PortfolioTable } from '@/components/portfolio/PortfolioTable';
 import { AnalyticsWidgets } from '@/components/portfolio/AnalyticsWidgets';
+import { NotesWidget } from '@/components/portfolio/NotesWidget';
+import { DividendTracker } from '@/components/portfolio/DividendTracker';
+import { CurrencyWidget } from '@/components/portfolio/CurrencyWidget';
+import { WatchlistWidget } from '@/components/portfolio/WatchlistWidget';
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState('Portfolio');
@@ -29,6 +33,19 @@ const Index = () => {
 
         {/* Analytics Widgets */}
         <AnalyticsWidgets />
+
+        {/* Additional Widgets */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <NotesWidget />
+          <div className="md:col-span-2">
+            <DividendTracker />
+          </div>
+          <WatchlistWidget />
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <CurrencyWidget />
+        </div>
       </div>
     </div>
   );
