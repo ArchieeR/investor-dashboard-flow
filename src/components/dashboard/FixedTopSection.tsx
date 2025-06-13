@@ -8,6 +8,8 @@ import { EnhancedPortfolioTable } from '@/components/portfolio/EnhancedPortfolio
 export const FixedTopSection = () => {
   const cellSize = 120;
 
+  console.log('FixedTopSection rendering - should only contain Portfolio Chart, Analytics, News, and Holdings Table');
+
   return (
     <div className="space-y-4 mb-6">
       {/* Top Row: Portfolio Chart + Analytics & News */}

@@ -102,6 +102,9 @@ const Index = () => {
     }
   ]);
 
+  console.log('Grid items:', gridItems);
+  console.log('Grid items length:', gridItems.length);
+
   return (
     <div className="min-h-screen bg-background">
       <TopNavigation activeTab={activeTab} onTabChange={setActiveTab} />
@@ -111,17 +114,19 @@ const Index = () => {
         <FixedTopSection />
         
         {/* Widget Grid Section - All movable/resizable widgets */}
-        <div>
+        <div className="mt-8">
           <h3 className="text-lg font-semibold mb-4 text-muted-foreground">
             Portfolio Widgets
           </h3>
-          <GridSystem 
-            items={gridItems} 
-            onItemsChange={setGridItems}
-            columns={8}
-            cellSize={120}
-            allowOverlap={false}
-          />
+          <div className="border-2 border-dashed border-gray-300 p-4 rounded-lg">
+            <GridSystem 
+              items={gridItems} 
+              onItemsChange={setGridItems}
+              columns={8}
+              cellSize={120}
+              allowOverlap={false}
+            />
+          </div>
         </div>
       </div>
     </div>

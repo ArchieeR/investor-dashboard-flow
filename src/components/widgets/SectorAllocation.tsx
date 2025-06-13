@@ -3,6 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { PieChart } from 'lucide-react';
 
 export const SectorAllocation = () => {
+  console.log('SectorAllocation widget rendering');
+  
   const sectors = [
     { name: 'Technology', percentage: 28.5, color: 'bg-blue-500' },
     { name: 'Healthcare', percentage: 15.2, color: 'bg-green-500' },
