@@ -146,7 +146,7 @@ const Index = () => {
             Portfolio Widgets
           </h3>
           {/* Full width grid with no container restrictions */}
-          <div className="w-full flex justify-center">
+          <div className="w-full">
             <GridSystem 
               items={gridItems} 
               onItemsChange={setGridItems}

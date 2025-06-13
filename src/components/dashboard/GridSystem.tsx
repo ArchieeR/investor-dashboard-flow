@@ -37,6 +37,17 @@ export const GridSystem = ({
   const [ghostPosition, setGhostPosition] = useState<{ x: number; y: number; width: number; height: number } | null>(null);
   const gridRef = useRef<HTMLDivElement>(null);
 
+  // Calculate dynamic cell dimensions based on container width
+  const getCellDimensions = useCallback(() => {
+    if (!gridRef.current) return { cellWidth: cellSize, cellHeight: cellSize };
+    
+    const containerWidth = gridRef.current.clientWidth;
+    const cellWidth = containerWidth / columns;
+    const cellHeight = cellSize; // Keep height consistent
+    
+    return { cellWidth, cellHeight };
+  }, [columns, cellSize]);
+
   // Comprehensive collision resolution that handles cascading displacement
   const resolveAllCollisions = (newItems: GridItem[]) => {
     if (allowOverlap) return newItems;
@@ -110,13 +121,14 @@ export const GridSystem = ({
     if (!gridRef.current) return;
 
     const gridRect = gridRef.current.getBoundingClientRect();
+    const { cellWidth, cellHeight } = getCellDimensions();
 
     if (draggedItem) {
       const item = items.find(i => i.id === draggedItem);
       if (!item) return;
 
-      const gridX = Math.max(0, Math.floor((e.clientX - gridRect.left - dragOffset.x) / cellSize));
-      const gridY = Math.max(0, Math.floor((e.clientY - gridRect.top - dragOffset.y) / cellSize));
+      const gridX = Math.max(0, Math.floor((e.clientX - gridRect.left - dragOffset.x) / cellWidth));
+      const gridY = Math.max(0, Math.floor((e.clientY - gridRect.top - dragOffset.y) / cellHeight));
       const constrainedX = Math.max(0, Math.min(gridX, columns - item.width));
       const constrainedY = Math.max(0, gridY);
 
@@ -127,12 +139,12 @@ export const GridSystem = ({
       const item = items.find(i => i.id === resizingItem);
       if (!item) return;
 
-      const newWidth = Math.max(item.minWidth || 2, Math.min(4, Math.floor((e.clientX - gridRect.left - item.x * cellSize) / cellSize)));
-      const newHeight = Math.max(item.minHeight || 2, Math.min(4, Math.floor((e.clientY - gridRect.top - item.y * cellSize) / cellSize)));
+      const newWidth = Math.max(item.minWidth || 2, Math.min(4, Math.floor((e.clientX - gridRect.left - item.x * cellWidth) / cellWidth)));
+      const newHeight = Math.max(item.minHeight || 2, Math.min(4, Math.floor((e.clientY - gridRect.top - item.y * cellHeight) / cellHeight)));
 
       setGhostPosition({ x: item.x, y: item.y, width: newWidth, height: newHeight });
     }
-  }, [draggedItem, resizingItem, items, dragOffset, cellSize, columns]);
+  }, [draggedItem, resizingItem, items, dragOffset, columns, getCellDimensions]);
 
   const handleMouseUp = useCallback(() => {
     if (draggedItem && ghostPosition) {
@@ -181,21 +193,20 @@ export const GridSystem = ({
     return Math.max(...items.map(item => item.y + item.height), 3);
   };
 
-  const containerWidth = columns * cellSize;
+  const { cellWidth, cellHeight } = getCellDimensions();
 
   return (
     <div className="w-full">
       <div 
         ref={gridRef}
-        className="relative mx-auto"
+        className="relative w-full"
         style={{ 
-          width: `${containerWidth}px`,
-          height: `${getMaxRows() * cellSize}px`,
+          height: `${getMaxRows() * cellHeight}px`,
           backgroundImage: `
             linear-gradient(to right, hsl(var(--border)) 1px, transparent 1px),
             linear-gradient(to bottom, hsl(var(--border)) 1px, transparent 1px)
           `,
-          backgroundSize: `${cellSize}px ${cellSize}px`
+          backgroundSize: `${cellWidth}px ${cellHeight}px`
         }}
       >
         {/* Ghost position indicator */}
@@ -203,10 +214,10 @@ export const GridSystem = ({
           <div
             className="absolute border-2 border-dashed border-primary bg-primary/10 rounded-lg z-40 pointer-events-none"
             style={{
-              left: `${ghostPosition.x * cellSize}px`,
-              top: `${ghostPosition.y * cellSize}px`,
-              width: `${ghostPosition.width * cellSize}px`,
-              height: `${ghostPosition.height * cellSize}px`,
+              left: `${ghostPosition.x * cellWidth}px`,
+              top: `${ghostPosition.y * cellHeight}px`,
+              width: `${ghostPosition.width * cellWidth}px`,
+              height: `${ghostPosition.height * cellHeight}px`,
             }}
           />
         )}
@@ -223,10 +234,10 @@ export const GridSystem = ({
                 item.fixed ? '' : 'hover:shadow-lg cursor-move'
               } ${isDragging || isResizing ? 'z-50 shadow-2xl opacity-75' : 'z-10'}`}
               style={{
-                left: `${item.x * cellSize}px`,
-                top: `${item.y * cellSize}px`,
-                width: `${item.width * cellSize}px`,
-                height: `${item.height * cellSize}px`,
+                left: `${item.x * cellWidth}px`,
+                top: `${item.y * cellHeight}px`,
+                width: `${item.width * cellWidth}px`,
+                height: `${item.height * cellHeight}px`,
               }}
               onMouseDown={(e) => !item.fixed && handleMouseDown(e, item.id, 'drag')}
             >
