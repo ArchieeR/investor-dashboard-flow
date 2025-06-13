@@ -16,13 +16,13 @@ const chartConfig = {
 
 export const AllocationPieChart = () => {
   return (
-    <Card className="h-full flex flex-col rounded-xl border-0 shadow-sm bg-card overflow-hidden">
-      <CardHeader className="pb-2 px-4 pt-4">
-        <CardTitle className="text-sm font-semibold">Asset Allocation</CardTitle>
+    <Card className="h-full flex flex-col">
+      <CardHeader className="pb-2">
+        <CardTitle className="text-sm">Asset Allocation</CardTitle>
       </CardHeader>
-      <CardContent className="flex-1 flex flex-col overflow-hidden px-4 pb-4">
-        <div className="flex-1 min-h-0">
-          <ChartContainer config={chartConfig} className="h-full w-full">
+      <CardContent className="flex-1 flex flex-col overflow-hidden">
+        <div className="flex-1">
+          <ChartContainer config={chartConfig} className="h-32">
             <PieChart>
               <Pie
                 data={data}
@@ -40,14 +40,14 @@ export const AllocationPieChart = () => {
             </PieChart>
           </ChartContainer>
         </div>
-        <div className="space-y-1 mt-2">
+        <div className="space-y-1">
           {data.map((item, index) => (
             <div key={index} className="flex items-center justify-between text-xs">
               <div className="flex items-center gap-1 min-w-0 flex-1">
                 <div className="w-2 h-2 rounded-sm flex-shrink-0" style={{ backgroundColor: item.color }} />
                 <span className="truncate">{item.name}</span>
               </div>
-              <span className="flex-shrink-0 font-medium">{item.value}%</span>
+              <span className="flex-shrink-0">{item.value}%</span>
             </div>
           ))}
         </div>

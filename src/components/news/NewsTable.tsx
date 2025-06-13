@@ -62,9 +62,9 @@ const newsData: NewsItem[] = [
 export const NewsTable = () => {
   const getImportanceColor = (importance: string) => {
     switch (importance) {
-      case 'HIGH': return 'bg-green-500';
-      case 'MED': return 'bg-yellow-500';
-      case 'LOW': return 'bg-red-500';
+      case 'HIGH': return 'bg-red-500';
+      case 'MED': return 'bg-orange-500';
+      case 'LOW': return 'bg-green-500';
       default: return 'bg-gray-500';
     }
   };

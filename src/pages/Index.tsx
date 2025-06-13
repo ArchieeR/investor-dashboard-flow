@@ -19,50 +19,44 @@ const Index = () => {
   const [activeTab, setActiveTab] = useState('Portfolio');
 
   const [gridItems, setGridItems] = useState<GridItem[]>([
-    // Fixed widgets at the top
-    // Portfolio Chart - 4x8 at the very top
-    {
-      id: 'portfolio-chart',
-      x: 0,
-      y: 0,
-      width: 4,
-      height: 8,
-      component: PortfolioChart,
-      fixed: true,
-      minWidth: 4,
-      minHeight: 8
-    },
-    // Analytics Widgets - 4x8 next to chart
-    {
-      id: 'analytics',
-      x: 4,
-      y: 0,
-      width: 4,
-      height: 8,
-      component: AnalyticsWidgets,
-      fixed: true,
-      minWidth: 4,
-      minHeight: 8
-    },
-    // Holdings Table - 8x8 directly underneath
+    // Holdings Table - large widget, minimum 4x3
     {
       id: 'holdings-table',
       x: 0,
-      y: 8,
-      width: 8,
-      height: 8,
+      y: 0,
+      width: 4,
+      height: 3,
       component: EnhancedPortfolioTable,
-      fixed: true,
-      minWidth: 8,
-      minHeight: 8
+      minWidth: 4,
+      minHeight: 3
     },
-    
-    // Moveable widgets below the fixed ones (starting from y: 16)
+    // Portfolio Chart - large widget, minimum 4x2
+    {
+      id: 'portfolio-chart',
+      x: 4,
+      y: 0,
+      width: 4,
+      height: 2,
+      component: PortfolioChart,
+      minWidth: 4,
+      minHeight: 2
+    },
+    // Analytics Widgets - spans 4x2
+    {
+      id: 'analytics',
+      x: 4,
+      y: 2,
+      width: 4,
+      height: 1,
+      component: AnalyticsWidgets,
+      minWidth: 4,
+      minHeight: 1
+    },
     // Allocation Pie Chart - 2x2
     {
       id: 'allocation-pie',
       x: 0,
-      y: 16,
+      y: 3,
       width: 2,
       height: 2,
       component: AllocationPieChart,
@@ -73,18 +67,29 @@ const Index = () => {
     {
       id: 'country-exposure',
       x: 2,
-      y: 16,
+      y: 3,
       width: 2,
       height: 2,
       component: CountryExposure,
+      minWidth: 1,
+      minHeight: 1
+    },
+    // Notification Widget - 2x2
+    {
+      id: 'notifications',
+      x: 4,
+      y: 3,
+      width: 2,
+      height: 2,
+      component: NotificationWidget,
       minWidth: 2,
       minHeight: 2
     },
     // News Feed - 2x2
     {
       id: 'news-feed',
-      x: 4,
-      y: 16,
+      x: 6,
+      y: 3,
       width: 2,
       height: 2,
       component: NewsFeedWidget,
@@ -94,68 +99,57 @@ const Index = () => {
     // Earnings Calendar - 2x2
     {
       id: 'earnings',
-      x: 6,
-      y: 16,
+      x: 0,
+      y: 5,
       width: 2,
       height: 2,
       component: EarningsCalendar,
       minWidth: 2,
       minHeight: 2
     },
-    // Notification Widget - 2x2
-    {
-      id: 'notifications',
-      x: 0,
-      y: 18,
-      width: 2,
-      height: 2,
-      component: NotificationWidget,
-      minWidth: 2,
-      minHeight: 2
-    },
-    // Notes Widget - 2x2
+    // Notes Widget - 1x1
     {
       id: 'notes',
       x: 2,
-      y: 18,
-      width: 2,
-      height: 2,
+      y: 5,
+      width: 1,
+      height: 1,
       component: NotesWidget,
-      minWidth: 2,
-      minHeight: 2
+      minWidth: 1,
+      minHeight: 1
     },
-    // Dividend Tracker - 2x2
+    // Dividend Tracker - 1x1
     {
       id: 'dividends',
-      x: 4,
-      y: 18,
-      width: 2,
-      height: 2,
+      x: 3,
+      y: 5,
+      width: 1,
+      height: 1,
       component: DividendTracker,
-      minWidth: 2,
-      minHeight: 2
+      minWidth: 1,
+      minHeight: 1
     },
-    // Currency Widget - 2x2
+    // Currency Widget - 1x1
     {
       id: 'currency',
-      x: 6,
-      y: 18,
-      width: 2,
-      height: 2,
+      x: 4,
+      y: 5,
+      width: 1,
+      height: 1,
       component: CurrencyWidget,
-      minWidth: 2,
-      minHeight: 2
+      minWidth: 1,
+      minHeight: 1
     },
-    // Watchlist Widget - 2x2
+    // Watchlist Widget - 1x1
     {
       id: 'watchlist',
-      x: 0,
-      y: 20,
-      width: 2,
-      height: 2,
+      x: 5,
+      y: 5,
+      width: 1,
+      height: 1,
       component: WatchlistWidget,
-      minWidth: 2,
-      minHeight: 2
+      minWidth: 1,
+      minHeight: 1
     }
   ]);
 

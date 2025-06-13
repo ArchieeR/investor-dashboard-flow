@@ -22,21 +22,20 @@ interface GridSystemProps {
   columns?: number;
 }
 
-// Valid widget sizes for iPad-style grid (minimum 2x2)
+// Valid widget sizes (width x height)
 const VALID_SIZES = [
-  { w: 2, h: 2 }, { w: 2, h: 4 }, { w: 3, h: 3 }, 
-  { w: 4, h: 2 }, { w: 4, h: 4 }, { w: 4, h: 6 }, { w: 4, h: 8 },
-  { w: 6, h: 2 }, { w: 6, h: 4 }, { w: 8, h: 2 }, { w: 8, h: 4 }, { w: 8, h: 8 }
+  { w: 1, h: 1 }, { w: 2, h: 1 }, { w: 3, h: 1 }, { w: 4, h: 1 },
+  { w: 2, h: 2 }, { w: 3, h: 2 }, { w: 4, h: 2 }, { w: 4, h: 3 }
 ];
 
 export const GridSystem = ({ items, onItemsChange, columns = 8 }: GridSystemProps) => {
   const [draggedItem, setDraggedItem] = useState<string | null>(null);
   const [resizingItem, setResizingItem] = useState<string | null>(null);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
-  const [ghostPosition, setGhostPosition] = useState<{ x: number; y: number; width: number; height: number } | null>(null);
+  const [ghostPosition, setGhostPosition] = useState<{ x: number; y: number } | null>(null);
   const gridRef = useRef<HTMLDivElement>(null);
 
-  const cellSize = 120; // Square cells
+  const cellSize = 120; // Base cell size for square grid
 
   // Check if a position would cause collision with other items
   const hasCollision = (x: number, y: number, width: number, height: number, excludeId?: string) => {
@@ -52,45 +51,26 @@ export const GridSystem = ({ items, onItemsChange, columns = 8 }: GridSystemProp
     });
   };
 
-  // Push logic - move widgets down when collision occurs
-  const pushWidgetsDown = (newItem: { x: number; y: number; width: number; height: number }, excludeId?: string) => {
-    const conflictingItems = items.filter(item => {
-      if (item.id === excludeId || item.fixed) return false;
-      
-      return !(
-        newItem.x >= item.x + item.width ||
-        newItem.x + newItem.width <= item.x ||
-        newItem.y >= item.y + item.height ||
-        newItem.y + newItem.height <= item.y
-      );
-    });
-
-    if (conflictingItems.length === 0) return items;
-
-    const updatedItems = [...items];
+  // Find the next available position for a widget
+  const findNextAvailablePosition = (width: number, height: number, excludeId?: string) => {
+    const maxRows = Math.max(...items.map(item => item.y + item.height), 10);
     
-    // Calculate how far down to push
-    const pushDistance = (newItem.y + newItem.height) - Math.min(...conflictingItems.map(item => item.y));
-    
-    conflictingItems.forEach(conflictItem => {
-      const itemIndex = updatedItems.findIndex(item => item.id === conflictItem.id);
-      if (itemIndex !== -1) {
-        updatedItems[itemIndex] = {
-          ...updatedItems[itemIndex],
-          y: updatedItems[itemIndex].y + pushDistance
-        };
+    for (let y = 0; y <= maxRows; y++) {
+      for (let x = 0; x <= columns - width; x++) {
+        if (!hasCollision(x, y, width, height, excludeId)) {
+          return { x, y };
+        }
       }
-    });
-
-    return updatedItems;
+    }
+    
+    // If no position found, place at bottom
+    return { x: 0, y: maxRows + 1 };
   };
 
   // Get the closest valid size for resizing
-  const getClosestValidSize = (targetWidth: number, targetHeight: number, minWidth: number = 2, minHeight: number = 2) => {
+  const getClosestValidSize = (targetWidth: number, targetHeight: number, minWidth: number, minHeight: number) => {
     const validOptions = VALID_SIZES.filter(size => 
-      size.w >= Math.max(minWidth, 2) && 
-      size.h >= Math.max(minHeight, 2) && 
-      size.w <= columns
+      size.w >= minWidth && size.h >= minHeight && size.w <= columns
     );
     
     let closest = validOptions[0];
@@ -128,69 +108,74 @@ export const GridSystem = ({ items, onItemsChange, columns = 8 }: GridSystemProp
     if (!gridRef.current) return;
 
     const gridRect = gridRef.current.getBoundingClientRect();
+    const gridX = Math.max(0, Math.floor((e.clientX - gridRect.left - dragOffset.x) / cellSize));
+    const gridY = Math.max(0, Math.floor((e.clientY - gridRect.top - dragOffset.y) / cellSize));
 
     if (draggedItem) {
       const item = items.find(i => i.id === draggedItem);
       if (!item) return;
 
-      const gridX = Math.max(0, Math.floor((e.clientX - gridRect.left - dragOffset.x) / cellSize));
-      const gridY = Math.max(0, Math.floor((e.clientY - gridRect.top - dragOffset.y) / cellSize));
-
       const constrainedX = Math.max(0, Math.min(gridX, columns - item.width));
       const constrainedY = Math.max(0, gridY);
 
       // Show ghost position
-      setGhostPosition({ x: constrainedX, y: constrainedY, width: item.width, height: item.height });
+      setGhostPosition({ x: constrainedX, y: constrainedY });
+
+      // Check for collision and find alternative position if needed
+      if (!hasCollision(constrainedX, constrainedY, item.width, item.height, draggedItem)) {
+        // No collision, update position
+        const updatedItems = items.map(i => {
+          if (i.id === draggedItem) {
+            return { ...i, x: constrainedX, y: constrainedY };
+          }
+          return i;
+        });
+        onItemsChange(updatedItems);
+      }
     }
 
     if (resizingItem) {
       const item = items.find(i => i.id === resizingItem);
       if (!item) return;
 
-      const newWidth = Math.max(2, Math.floor((e.clientX - gridRect.left - item.x * cellSize) / cellSize));
-      const newHeight = Math.max(2, Math.floor((e.clientY - gridRect.top - item.y * cellSize) / cellSize));
+      const newWidth = Math.max(1, Math.floor((e.clientX - gridRect.left - item.x * cellSize) / cellSize));
+      const newHeight = Math.max(1, Math.floor((e.clientY - gridRect.top - item.y * cellSize) / cellSize));
       
-      const closestSize = getClosestValidSize(newWidth, newHeight, item.minWidth, item.minHeight);
+      const closestSize = getClosestValidSize(
+        newWidth, 
+        newHeight, 
+        item.minWidth || 1, 
+        item.minHeight || 1
+      );
 
-      // Show ghost for resize
-      setGhostPosition({ x: item.x, y: item.y, width: closestSize.w, height: closestSize.h });
-    }
-  }, [draggedItem, resizingItem, items, dragOffset, cellSize, columns]);
-
-  const handleMouseUp = useCallback(() => {
-    if (draggedItem && ghostPosition) {
-      const item = items.find(i => i.id === draggedItem);
-      if (item) {
-        // Apply push logic
-        const newPosition = { x: ghostPosition.x, y: ghostPosition.y, width: item.width, height: item.height };
-        const pushedItems = pushWidgetsDown(newPosition, draggedItem);
-        
-        const updatedItems = pushedItems.map(i => {
-          if (i.id === draggedItem) {
-            return { ...i, x: ghostPosition.x, y: ghostPosition.y };
+      // Check if resize would cause collision
+      if (!hasCollision(item.x, item.y, closestSize.w, closestSize.h, resizingItem)) {
+        const updatedItems = items.map(i => {
+          if (i.id === resizingItem) {
+            return { ...i, width: closestSize.w, height: closestSize.h };
           }
           return i;
         });
-        
         onItemsChange(updatedItems);
       }
     }
+  }, [draggedItem, resizingItem, items, onItemsChange, dragOffset, cellSize, columns]);
 
-    if (resizingItem && ghostPosition) {
-      const item = items.find(i => i.id === resizingItem);
-      if (item) {
-        // Apply push logic for resize
-        const newSize = { x: item.x, y: item.y, width: ghostPosition.width, height: ghostPosition.height };
-        const pushedItems = pushWidgetsDown(newSize, resizingItem);
-        
-        const updatedItems = pushedItems.map(i => {
-          if (i.id === resizingItem) {
-            return { ...i, width: ghostPosition.width, height: ghostPosition.height };
-          }
-          return i;
-        });
-        
-        onItemsChange(updatedItems);
+  const handleMouseUp = useCallback(() => {
+    if (draggedItem) {
+      const item = items.find(i => i.id === draggedItem);
+      if (item && ghostPosition) {
+        // Final position check and auto-placement if collision
+        if (hasCollision(ghostPosition.x, ghostPosition.y, item.width, item.height, draggedItem)) {
+          const newPosition = findNextAvailablePosition(item.width, item.height, draggedItem);
+          const updatedItems = items.map(i => {
+            if (i.id === draggedItem) {
+              return { ...i, x: newPosition.x, y: newPosition.y };
+            }
+            return i;
+          });
+          onItemsChange(updatedItems);
+        }
       }
     }
 
@@ -198,7 +183,7 @@ export const GridSystem = ({ items, onItemsChange, columns = 8 }: GridSystemProp
     setResizingItem(null);
     setDragOffset({ x: 0, y: 0 });
     setGhostPosition(null);
-  }, [draggedItem, resizingItem, ghostPosition, items, onItemsChange]);
+  }, [draggedItem, ghostPosition, items, onItemsChange]);
 
   // Add event listeners
   useEffect(() => {
@@ -213,7 +198,7 @@ export const GridSystem = ({ items, onItemsChange, columns = 8 }: GridSystemProp
   }, [draggedItem, resizingItem, handleMouseMove, handleMouseUp]);
 
   const getMaxRows = () => {
-    return Math.max(...items.map(item => item.y + item.height), 10);
+    return Math.max(...items.map(item => item.y + item.height), 6);
   };
 
   return (
@@ -230,14 +215,14 @@ export const GridSystem = ({ items, onItemsChange, columns = 8 }: GridSystemProp
       }}
     >
       {/* Ghost position indicator */}
-      {ghostPosition && (
+      {ghostPosition && draggedItem && (
         <div
           className="absolute border-2 border-dashed border-primary bg-primary/10 rounded-lg z-40 pointer-events-none"
           style={{
             left: `${ghostPosition.x * cellSize}px`,
             top: `${ghostPosition.y * cellSize}px`,
-            width: `${ghostPosition.width * cellSize}px`,
-            height: `${ghostPosition.height * cellSize}px`,
+            width: `${items.find(i => i.id === draggedItem)?.width! * cellSize}px`,
+            height: `${items.find(i => i.id === draggedItem)?.height! * cellSize}px`,
           }}
         />
       )}
@@ -245,14 +230,13 @@ export const GridSystem = ({ items, onItemsChange, columns = 8 }: GridSystemProp
       {items.map((item) => {
         const Component = item.component;
         const isDragging = draggedItem === item.id;
-        const isResizing = resizingItem === item.id;
         
         return (
           <Card
             key={item.id}
-            className={`absolute transition-all duration-200 rounded-xl overflow-hidden ${
-              item.fixed ? 'shadow-sm' : 'hover:shadow-lg cursor-move'
-            } ${isDragging || isResizing ? 'z-50 shadow-2xl opacity-75' : 'z-10'}`}
+            className={`absolute transition-all duration-200 ${
+              item.fixed ? '' : 'hover:shadow-lg cursor-move'
+            } ${isDragging ? 'z-50 shadow-2xl opacity-75' : 'z-10'}`}
             style={{
               left: `${item.x * cellSize}px`,
               top: `${item.y * cellSize}px`,
@@ -273,9 +257,9 @@ export const GridSystem = ({ items, onItemsChange, columns = 8 }: GridSystemProp
 
             {!item.fixed && (
               <div
-                className="absolute bottom-0 right-0 w-4 h-4 cursor-se-resize z-20 opacity-50 hover:opacity-100"
+                className="absolute bottom-0 right-0 w-4 h-4 cursor-se-resize z-20"
                 style={{
-                  background: 'linear-gradient(-45deg, transparent 30%, hsl(var(--primary)) 30%, hsl(var(--primary)) 70%, transparent 70%)'
+                  background: 'linear-gradient(-45deg, transparent 30%, hsl(var(--border)) 30%, hsl(var(--border)) 70%, transparent 70%)'
                 }}
                 onMouseDown={(e) => handleMouseDown(e, item.id, 'resize')}
               />
