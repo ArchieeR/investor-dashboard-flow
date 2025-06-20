@@ -40,9 +40,7 @@ export const NotificationWidget = () => {
   const portfolioAlerts = [
     'Dividend from VUSA paid: £28.91',
     'ETF rebalanced: 3 new holdings added to DFNG',
-    'Cash ISA topped up: +£1,000',
-    'AAPL position down 5% - consider reviewing',
-    'Monthly contribution scheduled for tomorrow'
+    'Cash ISA topped up: +£1,000'
   ];
 
   return (
