@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Bell, TrendingUp, AlertTriangle, DollarSign } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
@@ -19,28 +18,12 @@ export const NotificationWidget = () => {
       priority: 'MED',
       message: 'UK Core Inflation slows to 2.4%',
       color: 'bg-yellow-100 text-yellow-800 border-yellow-200'
-    },
-    {
-      priority: 'LOW',
-      message: 'XLE up 0.4% on supply stabilisation',
-      color: 'bg-red-100 text-red-800 border-red-200'
-    },
-    {
-      priority: 'HIGH',
-      message: 'ECB holds rates at 4.25% as expected',
-      color: 'bg-green-100 text-green-800 border-green-200'
-    },
-    {
-      priority: 'MED',
-      message: 'FTSE 100 hits new monthly high',
-      color: 'bg-yellow-100 text-yellow-800 border-yellow-200'
     }
   ];
 
   const portfolioAlerts = [
     'Dividend from VUSA paid: £28.91',
-    'ETF rebalanced: 3 new holdings added to DFNG',
-    'Cash ISA topped up: +£1,000'
+    'ETF rebalanced: 3 new holdings added to DFNG'
   ];
 
   return (
