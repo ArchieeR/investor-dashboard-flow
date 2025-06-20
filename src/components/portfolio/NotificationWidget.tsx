@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Bell, TrendingUp, AlertTriangle, DollarSign } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
@@ -36,25 +37,25 @@ export const NotificationWidget = () => {
       </CardHeader>
       <CardContent className="space-y-6 h-full overflow-auto">
         {/* Gains Section */}
-        <div className="space-y-3">
-          <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg border border-green-200">
+        <div className="space-y-2">
+          <div className="flex items-center justify-between p-2 bg-green-50 rounded-lg border border-green-200">
             <div className="flex items-center gap-2">
-              <TrendingUp className="h-4 w-4 text-green-600" />
-              <span className="font-medium text-sm text-green-900">Day Gain</span>
+              <TrendingUp className="h-3.5 w-3.5 text-green-600" />
+              <span className="font-medium text-xs text-green-900">Day Gain</span>
             </div>
             <div className="text-right">
-              <div className="font-semibold text-green-600">{gains.dayGain.value}</div>
+              <div className="font-semibold text-sm text-green-600">{gains.dayGain.value}</div>
               <div className="text-xs text-green-600">{gains.dayGain.percentage}</div>
             </div>
           </div>
           
-          <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg border border-blue-200">
+          <div className="flex items-center justify-between p-2 bg-blue-50 rounded-lg border border-blue-200">
             <div className="flex items-center gap-2">
-              <DollarSign className="h-4 w-4 text-blue-600" />
-              <span className="font-medium text-sm text-blue-900">Total Gain</span>
+              <DollarSign className="h-3.5 w-3.5 text-blue-600" />
+              <span className="font-medium text-xs text-blue-900">Total Gain</span>
             </div>
             <div className="text-right">
-              <div className="font-semibold text-blue-600">{gains.totalGain.value}</div>
+              <div className="font-semibold text-sm text-blue-600">{gains.totalGain.value}</div>
               <div className="text-xs text-blue-600">{gains.totalGain.percentage}</div>
             </div>
           </div>
